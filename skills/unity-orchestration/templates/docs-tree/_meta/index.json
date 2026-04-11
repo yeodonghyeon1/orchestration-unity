@@ -1,15 +1,130 @@
 {
   "version": 1,
-  "generated_at": null,
+  "generated_at": "2026-04-11T09:15:08Z",
   "generator": "scripts/update-docs-index.py",
   "project": {
     "name": "",
     "engine": "",
     "genre": ""
   },
-  "tree": {},
-  "by_tag": {},
-  "by_owner": {},
+  "tree": {
+    "root": {
+      "id": "root",
+      "title": "Project Documentation",
+      "owner": "recorder",
+      "status": "stable",
+      "updated": "2026-04-11",
+      "tags": [
+        "index"
+      ],
+      "depends_on": [],
+      "referenced_by": []
+    },
+    "design": {
+      "id": "design",
+      "title": "Visual & UX Design Domain",
+      "owner": "recorder",
+      "status": "stable",
+      "updated": "2026-04-11",
+      "tags": [
+        "index",
+        "design"
+      ],
+      "depends_on": [],
+      "referenced_by": []
+    },
+    "game": {
+      "id": "game",
+      "title": "Game Design Domain",
+      "owner": "recorder",
+      "status": "stable",
+      "updated": "2026-04-11",
+      "tags": [
+        "index",
+        "game"
+      ],
+      "depends_on": [],
+      "referenced_by": []
+    },
+    "tech": {
+      "id": "tech",
+      "title": "Technical Domain",
+      "owner": "recorder",
+      "status": "stable",
+      "updated": "2026-04-11",
+      "tags": [
+        "index",
+        "tech"
+      ],
+      "depends_on": [],
+      "referenced_by": []
+    },
+    "_meta": {
+      "conventions": {
+        "id": "_meta.conventions",
+        "title": "Documentation Conventions",
+        "owner": "recorder",
+        "status": "stable",
+        "updated": "2026-04-11",
+        "tags": [
+          "conventions"
+        ],
+        "depends_on": [],
+        "referenced_by": []
+      },
+      "glossary": {
+        "id": "_meta.glossary",
+        "title": "Glossary",
+        "owner": "recorder",
+        "status": "stable",
+        "updated": "2026-04-11",
+        "tags": [
+          "glossary"
+        ],
+        "depends_on": [],
+        "referenced_by": []
+      }
+    }
+  },
+  "by_tag": {
+    "conventions": [
+      "_meta.conventions"
+    ],
+    "design": [
+      "design"
+    ],
+    "game": [
+      "game"
+    ],
+    "glossary": [
+      "_meta.glossary"
+    ],
+    "index": [
+      "design",
+      "game",
+      "root",
+      "tech"
+    ],
+    "tech": [
+      "tech"
+    ]
+  },
+  "by_owner": {
+    "recorder": [
+      "_meta.conventions",
+      "_meta.glossary",
+      "design",
+      "game",
+      "root",
+      "tech"
+    ]
+  },
   "dangling_references": [],
-  "orphans": []
+  "orphans": [
+    "_meta.conventions",
+    "_meta.glossary",
+    "design",
+    "game",
+    "tech"
+  ]
 }
