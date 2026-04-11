@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "generated_at": null,
+  "generator": "scripts/update-docs-index.py",
+  "project": {
+    "name": "",
+    "engine": "",
+    "genre": ""
+  },
+  "tree": {},
+  "by_tag": {},
+  "by_owner": {},
+  "dangling_references": [],
+  "orphans": []
+}

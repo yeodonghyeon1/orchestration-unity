@@ -1,0 +1,12 @@
+---
+id: <domain>.<section>.<slug>
+title: <human-readable title>
+owner: <planner|designer|developer|recorder>
+status: draft
+updated: <YYYY-MM-DD>
+version: 1
+depends_on: []
+referenced_by: []
+tags: []
+task_origin: <task-id>
+---
