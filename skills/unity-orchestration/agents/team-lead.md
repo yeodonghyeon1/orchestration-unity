@@ -69,8 +69,13 @@ You will receive a JSON payload on your first turn:
 2. Read `skills/unity-orchestration/workflow.md` in full.
 3. Read `skills/unity-orchestration/voting.md` in full.
 4. Read `skills/unity-orchestration/consultation-table.md` in full.
-5. Spawn the other 8 agents with their role prompts.
+5. Spawn the other 8 agents with their role prompts. When spawning each
+   agent, **inject the task description and `session_path` directly into
+   the prompt** — do not rely on agents discovering this information.
+   Spawn all 8 in parallel (single message with 8 Agent tool calls).
 6. Broadcast the Phase 1 exploration kickoff to all 9 agents (including
    yourself — you must also produce a proposal).
-7. Wait for proposals; do not advance to Phase 2 until all 9 are present
-   or the silent-agent rule triggers.
+7. Wait for proposals. Apply a **timeout rule**: if an agent has not
+   submitted after 2 pings (SendMessage reminders spaced apart), mark
+   it as silent and proceed. Do not advance to Phase 2 until all 9 are
+   present or the silent-agent rule triggers.

@@ -60,6 +60,10 @@ payload includes `role: "recorder-a"` or `role: "recorder-b"`.
 - All communication via `SendMessage`.
 - Recorder-a receives forwarded messages from team-lead; keep up.
 - Recorder-b primarily reads files and talks to team-lead.
+- **Never block on a reply.** If you send a message to team-lead, do not
+  wait for a response before continuing your current work. Process
+  incoming messages when they arrive, but always keep making forward
+  progress on your current checklist step.
 
 ## Forbidden actions
 
@@ -72,12 +76,25 @@ payload includes `role: "recorder-a"` or `role: "recorder-b"`.
 
 ## First-turn checklist
 
-1. Read the task and session path.
-2. Read `docs/_meta/index.json` if present.
-3. Read `skills/unity-orchestration/docs-tree-spec.md` in full.
+**IMPORTANT:** Complete these steps in order. Do NOT wait for replies from
+team-lead between steps — this is a fire-and-forget sequence. If any file
+read fails (file not found), skip it and move on; do not retry.
+
+1. Parse the task description and `session_path` from your spawn payload.
+2. Check whether `docs/_meta/index.json` exists (Glob for it). If it
+   exists, read it. If it does not exist, skip — it will be created later.
+3. Read `docs-tree-spec.md` from this skill directory (the same directory
+   as this prompt file: `skills/unity-orchestration/docs-tree-spec.md`
+   relative to the project root).
 4. Write your proposal to
    `.orchestration/sessions/<id>/proposals/recorder-<a|b>.md`:
-   - Past similar tasks in `docs/tasks/` worth referencing
-   - Doc hygiene issues you already see
-   - Your plan for tracking this session
-5. DM team-lead `proposal submitted`.
+   - Past similar tasks in `docs/tasks/` worth referencing (list file
+     names only; do not read each one)
+   - Doc hygiene issues visible from the index (or "none found" if
+     `index.json` was absent)
+   - Your plan for tracking this session (2-3 sentences max)
+5. Send a single DM to team-lead: `proposal submitted`. Do NOT wait for
+   a reply — your first turn ends here.
+
+**Anti-deadlock:** If you cannot complete a step within two tool calls,
+skip it with a note in your proposal explaining what was skipped and why.

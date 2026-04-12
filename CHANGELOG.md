@@ -6,6 +6,19 @@ All notable changes to this plugin are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-04-13
+
+### Fixed
+- Recorder agent infinite loading caused by retry loops on missing files,
+  ambiguous skill-relative paths, excessive first-turn workload, and
+  SendMessage deadlocks.
+- Added anti-deadlock rules: skip-on-failure, never-block-on-reply, and
+  2-tool-call timeout for first-turn checklist steps.
+- Team lead now injects task/session_path directly into spawn prompts and
+  spawns all 8 agents in parallel.
+- Phase 1 timeout: agents must submit proposals in first turn or submit
+  partial proposals instead of looping.
+
 ## [0.1.0] — 2026-04-11
 
 ### Added

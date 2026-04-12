@@ -37,6 +37,9 @@ managed MCP lock.
   containing: perspective summary, candidate sub-tasks, dependencies on other
   roles, risks.
 - Proposals use a fixed frontmatter and section layout (see templates).
+- **Timeout:** Agents must submit proposals within their first turn. If an
+  agent cannot complete exploration, it must submit a partial proposal with
+  a note about what was skipped rather than looping indefinitely.
 
 ## Phase 2 — Distribution (team lead)
 
