@@ -11,7 +11,7 @@ trap 'rm -rf "$TMP"' EXIT
 
 FAILED=0
 
-# --- Case 1: passing round (6 approve / 2 reject / 1 abstain) ------------
+# --- Case 1: passing round (7 approve / 2 reject / 1 abstain) ------------
 out="$TMP/pass.md"
 bash "$SCRIPT" \
   --round 1 \
@@ -21,7 +21,7 @@ bash "$SCRIPT" \
   --output "$out"
 
 grep -q "Result:.*PASS" "$out" || { echo "FAIL: pass round did not produce PASS"; FAILED=1; }
-grep -q "6 approve" "$out"     || { echo "FAIL: tally count wrong"; FAILED=1; }
+grep -q "7 approve" "$out"     || { echo "FAIL: tally count wrong"; FAILED=1; }
 grep -q "2 reject"  "$out"     || { echo "FAIL: reject count wrong"; FAILED=1; }
 grep -q "1 abstain" "$out"     || { echo "FAIL: abstain count wrong"; FAILED=1; }
 grep -q "planner-a" "$out"     || { echo "FAIL: row missing"; FAILED=1; }
@@ -35,7 +35,7 @@ pass_exit=$?
 set -e
 [[ $pass_exit -eq 0 ]] || { echo "FAIL: expected exit 0 on pass, got $pass_exit"; FAILED=1; }
 
-# --- Case 2: failing round (4 approve) -----------------------------------
+# --- Case 2: failing round (4 approve / 4 reject / 2 abstain) ------------
 set +e
 bash "$SCRIPT" \
   --round 2 \

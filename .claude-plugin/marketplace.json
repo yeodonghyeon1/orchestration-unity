@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "unity-orchestration",
-      "description": "9-agent consensus team for Unity game development: plan/accept voting, peer review, AI-readable docs tree.",
-      "version": "0.1.1",
+      "description": "10-agent consensus team for Unity game development: plan/accept voting, peer review, playtesting, AI-readable docs tree.",
+      "version": "0.2.0",
       "source": "./",
       "author": {
         "name": "yeodonghyeon1",

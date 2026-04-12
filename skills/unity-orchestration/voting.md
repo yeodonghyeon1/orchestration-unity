@@ -33,7 +33,7 @@ body MUST be a JSON object matching this schema:
 
 ## Tally rules
 
-- Pass threshold: **5 approvals out of 9**.
+- Pass threshold: **6 approvals out of 10**.
 - `abstain` does not count as approval. `reject` is counted as opposed.
 - Team lead is a voter, not a neutral facilitator.
 
@@ -48,7 +48,9 @@ body MUST be a JSON object matching this schema:
 
 For Accept Votes, an agent MUST NOT vote to accept artifacts produced by
 its own role pair. If all artifacts under review fall inside the agent's
-pair, the agent MUST abstain.
+pair, the agent MUST abstain. The tester has no pair and reviews all
+artifacts from a player-experience perspective; they are never required
+to abstain.
 
 ## Deadlock handling
 
@@ -67,7 +69,7 @@ pair, the agent MUST abstain.
 
 - **Task:** <task description>
 - **Date:** YYYY-MM-DD
-- **Result:** PASS (6 approve / 2 reject / 1 abstain)
+- **Result:** PASS (7 approve / 2 reject / 1 abstain)
 
 | Agent | Vote | Reason |
 |-------|------|--------|

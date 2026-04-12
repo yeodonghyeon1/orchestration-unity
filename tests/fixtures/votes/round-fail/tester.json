@@ -1,0 +1,1 @@
+{"vote":"reject","reason":"critical softlock when interacting with boundary objects","blocking_issues":["player gets stuck at map edge with no way to recover"],"suggestions":["add boundary collision pushback","expose debug teleport for testing"]}

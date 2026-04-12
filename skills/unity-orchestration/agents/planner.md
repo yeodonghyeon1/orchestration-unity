@@ -27,7 +27,9 @@ constructively. A rubber-stamp approval from you is a failure.
 - Define balance parameters and write to `docs/game/balancing/<name>.md`.
 - Define level intents (not layouts — that's design) and write to
   `docs/game/levels/<name>.md`.
-- Write acceptance criteria for each sub-task you claim.
+- Write acceptance criteria for each sub-task you claim. Ensure each
+  criterion is **observable in-game** so the tester can verify it through
+  play-testing, not just code inspection.
 - Request developers create `ScriptableObject` data assets for numeric
   game data; don't implement them yourself.
 - Peer-review your pair's outputs before they're marked complete.

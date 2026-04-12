@@ -6,6 +6,31 @@ All notable changes to this plugin are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-04-13
+
+### Added
+- Tester agent (`tester`) — solo agent that play-tests implemented features
+  via `unity-mcp`, inventing scenarios on the fly and reporting bugs from a
+  gamer perspective with severity levels (critical/major/minor/nit).
+- Phase 5 (Playtest) inserted between Execution and Accept Vote; workflow
+  is now eight phases instead of seven.
+- Testability input: tester raises testability concerns during Phase 1 and
+  Plan Vote so all agents consider them during their work.
+- Critical playtest findings gate Phase 6 — must be hotfixed before accept
+  vote proceeds.
+- Playtest findings are promoted to `docs/tasks/<id>/playtest.md` during
+  Close phase.
+
+### Changed
+- Team size: 9 → 10 agents (added 1 tester, no pair).
+- Vote threshold: 5/9 → 6/10 for both Plan Vote and Accept Vote.
+- Planner acceptance criteria must be observable in-game for tester
+  verification.
+- Designer scenes must consider playability and testability.
+- Developers implement debug shortcuts (`#if UNITY_EDITOR`) when tester
+  requests them.
+- Phase numbering shifted: Accept Vote is now Phase 6, Close is Phase 7.
+
 ## [0.1.1] — 2026-04-13
 
 ### Fixed

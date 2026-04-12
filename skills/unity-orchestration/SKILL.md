@@ -1,14 +1,14 @@
 ---
 name: unity-orchestration
-description: Use when the user invokes /unity-orchestration or asks to run a Unity task through a 9-agent consensus team. Bootstraps the team and hands off to the team lead.
+description: Use when the user invokes /unity-orchestration or asks to run a Unity task through a 10-agent consensus team. Bootstraps the team and hands off to the team lead.
 ---
 
 # unity-orchestration
 
-Run a Unity game development task through a 9-agent consensus team
-(1 team lead + 2 planners + 2 designers + 2 developers + 2 recorders).
-Every big task runs through seven phases: Boot → Exploration → Distribution →
-Plan Vote → Execution → Accept Vote → Close.
+Run a Unity game development task through a 10-agent consensus team
+(1 team lead + 2 planners + 2 designers + 2 developers + 2 recorders +
+1 tester). Every big task runs through eight phases: Boot → Exploration →
+Distribution → Plan Vote → Execution → Playtest → Accept Vote → Close.
 
 ## When to use
 
@@ -42,9 +42,9 @@ Before spawning anything, verify:
    - Call `Agent` tool with `subagent_type: general-purpose`,
      `name: team-lead`, `team_name: unity-orch-<timestamp>`, and the prompt
      from `agents/team-lead.md` with the task and session path injected.
-4. **Let team lead spawn the other eight**
+4. **Let team lead spawn the other nine**
    - The team lead's prompt instructs it to spawn planner-a/b, designer-a/b,
-     dev-a/b, recorder-a/b, using the corresponding role prompts.
+     dev-a/b, recorder-a/b, and tester, using the corresponding role prompts.
 5. **Return to the user**
    - Emit a short status message: team id, session path, and the link to
      `docs/tasks/<id>/README.md` (which will exist after Phase 6).

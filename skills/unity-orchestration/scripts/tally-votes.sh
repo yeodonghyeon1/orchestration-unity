@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Tallies votes from a directory of per-agent JSON files and writes a
-# markdown report. Exits 0 on pass (>=5 approvals / 9), 1 on fail, 2 on
+# markdown report. Exits 0 on pass (>=6 approvals / 10), 1 on fail, 2 on
 # usage / input errors.
 #
 # Usage:
@@ -69,14 +69,14 @@ for fname in sorted(os.listdir(input_dir)):
         sys.exit(2)
     entries.append((agent, d))
 
-if len(entries) != 9:
-    sys.stderr.write(f"expected 9 votes, got {len(entries)}\n")
+if len(entries) != 10:
+    sys.stderr.write(f"expected 10 votes, got {len(entries)}\n")
     sys.exit(2)
 
 approve = sum(1 for _, d in entries if d['vote'] == 'approve')
 reject  = sum(1 for _, d in entries if d['vote'] == 'reject')
 abstain = sum(1 for _, d in entries if d['vote'] == 'abstain')
-result  = "PASS" if approve >= 5 else "FAIL"
+result  = "PASS" if approve >= 6 else "FAIL"
 date    = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 header = f"# {vtype.capitalize()} Vote — Round {round_n}\n\n"

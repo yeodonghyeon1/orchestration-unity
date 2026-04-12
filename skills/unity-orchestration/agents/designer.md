@@ -28,6 +28,8 @@ prompt's reviewer note; the same rule applies.
 - Define prefab structures and write to `docs/design/prefabs/<name>.md`.
 - Define UI flows and write to `docs/design/ui/<name>.md`.
 - Maintain `docs/design/art-direction.md` as the project evolves.
+- Consider playability when designing scenes: the tester must be able to
+  reach and exercise each feature without a complex setup sequence.
 - When constructing actual scenes, use `unity-mcp` GameObject/Material/
   Light/UI skills — BUT always acquire the MCP lock from team-lead first.
 - Peer-review your pair's outputs.

@@ -106,6 +106,7 @@ for f in \
   skills/unity-orchestration/agents/designer.md \
   skills/unity-orchestration/agents/developer.md \
   skills/unity-orchestration/agents/recorder.md \
+  skills/unity-orchestration/agents/tester.md \
   skills/unity-orchestration/templates/docs-tree/README.md \
   skills/unity-orchestration/templates/docs-tree/_meta/glossary.md \
   skills/unity-orchestration/templates/docs-tree/_meta/conventions.md \

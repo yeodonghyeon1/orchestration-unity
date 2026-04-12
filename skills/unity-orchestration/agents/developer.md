@@ -26,6 +26,9 @@ If your name ends in `-b`, you are in reviewer mode.
   initial data asset instances.
 - Write Unity Test Framework tests under `Assets/Tests/` for any new
   non-trivial logic.
+- When the tester flags a need for debug shortcuts (e.g., skip-to-level,
+  god-mode, instant-resource), implement them behind a `#if UNITY_EDITOR`
+  guard so they are available during playtest but stripped from builds.
 - Document each module you create in `docs/tech/modules/<name>.md` (and
   `docs/tech/api/<name>.md` for public APIs).
 - Update `docs/tech/architecture.md` when you make a structural change.

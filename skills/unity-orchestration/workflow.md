@@ -12,8 +12,8 @@ tags: [workflow, reference]
 
 ## Overview
 
-A "big task" runs through seven phases: Boot, Exploration, Distribution, Plan
-Vote, Execution, Accept Vote, and Close. The team lead drives every phase
+A "big task" runs through eight phases: Boot, Exploration, Distribution, Plan
+Vote, Execution, Playtest, Accept Vote, and Close. The team lead drives every phase
 transition; recorder-A appends to `transcript.md` throughout. Reads, votes,
 and reviews fan out in parallel; file writes and Unity MCP calls are
 serialized through the TaskList `in_progress` constraint and the team-lead-
@@ -26,7 +26,7 @@ managed MCP lock.
 3. `scripts/init-workspace.sh` seeds `docs/` from `templates/docs-tree/` if
    missing.
 4. `TeamCreate unity-orch-<timestamp>` then spawn team-lead; team-lead spawns
-   the other eight.
+   the other nine.
 5. Team lead receives the initial task payload and session path.
 
 ## Phase 1 — Exploration (parallel)
@@ -43,7 +43,7 @@ managed MCP lock.
 
 ## Phase 2 — Distribution (team lead)
 
-- Team lead reads all 9 proposals and builds a TaskList draft via `TaskCreate`,
+- Team lead reads all 10 proposals and builds a TaskList draft via `TaskCreate`,
   setting `owner`, `description`, `blockedBy`.
 - Conflicts (two roles claiming the same work) are merged; gaps assigned to the
   closest role.
@@ -63,7 +63,9 @@ managed MCP lock.
   ```
 - Team lead runs `scripts/tally-votes.sh` and writes
   `docs/tasks/<id>/votes/plan-round-N.md`.
-- **Pass rule:** ≥ 5 approvals out of 9. `abstain` does not count as approval.
+- **Pass rule:** ≥ 6 approvals out of 10. `abstain` does not count as approval.
+- The tester's vote should reflect testability: can the proposed tasks be
+  verified through play-testing? Are acceptance criteria observable in-game?
 - On fail: collect reject reasons, broadcast, return to Phase 2. Max 3 plan
   rounds; on 3rd failure, team lead makes a forced call, records it as an ADR
   in `docs/decisions/`, and escalates to the user.
@@ -84,7 +86,26 @@ For each sub-task in dependency order:
 Parallelism rule: exploration, reviews, and votes fan out; file writes and MCP
 calls serialize on the `in_progress` constraint and the MCP lock.
 
-## Phase 5 — Accept Vote (cross-role review)
+## Phase 5 — Playtest (tester)
+
+- Team lead broadcasts: "execution complete, tester please play-test."
+- Tester acquires the MCP lock and plays through the implemented features:
+  1. Golden path — the intended happy flow end-to-end.
+  2. Boundary conditions — extreme inputs, empty states, rapid interactions.
+  3. Adversarial play — spam clicks, sequence breaks, edge-of-map movement,
+     resource exhaustion.
+- Tester writes findings to
+  `.orchestration/sessions/<id>/playtest/findings.md` using the severity
+  format in `agents/tester.md`.
+- Tester DMs team-lead a summary: `playtest complete: N critical, N major,
+  N minor, N nit`.
+- **Gate:** If any **critical** findings exist, team lead routes them to the
+  responsible developer/designer for a hotfix micro-cycle (back to Phase 4
+  for those specific issues only) before proceeding to Phase 6.
+- Major findings are logged but do not block Phase 6; they become follow-up
+  tasks recorded in `docs/tasks/<id>/outcome.md`.
+
+## Phase 6 — Accept Vote (cross-role review)
 
 - Team lead broadcasts: "task complete, review other roles' output and cast
   accept votes".
@@ -97,21 +118,25 @@ calls serialize on the `in_progress` constraint and the MCP lock.
   - Designers review code for UX impact and planner docs for visual
     feasibility.
   - Planners review code/scene vs. intended game feel.
+  - Tester votes based on actual play experience — did the feature feel
+    correct from a gamer's perspective? Were acceptance criteria met in
+    practice, not just on paper?
   - Recorder-B checks that docs are usable as documentation (readability,
     consistency, `index.json` freshness).
   - Recorder-A reviews everyone else's artifacts (since its own docs are
     excluded from its vote).
-- **Pass rule:** ≥ 5 accepts out of 9.
+- **Pass rule:** ≥ 6 accepts out of 10.
 - On fail: collect issue list, team lead generates follow-up tasks, return to
   Phase 2. Hard cap: 2 accept re-entries; after that, escalate to user with a
   "the initial design may be wrong" message and offer session termination.
 
-## Phase 6 — Close
+## Phase 7 — Close
 
 - Recorder-A promotes session artifacts to `docs/tasks/<id>/`:
   - `README.md` (one-page summary, with frontmatter)
   - `consultation.md` (cleaned transcript)
   - `votes.md` (all plan + accept rounds)
+  - `playtest.md` (tester findings summary)
   - `outcome.md` (files created/modified, with diff links)
 - Recorder-A updates affected folder `README.md` files and regenerates
   `_meta/index.json`.
@@ -122,10 +147,10 @@ calls serialize on the `in_progress` constraint and the MCP lock.
 
 ## Team lead responsibilities summary
 
-- Spawn the other eight agents in Phase 0 after being spawned by the SKILL.
+- Spawn the other nine agents in Phase 0 after being spawned by the SKILL.
 - Broadcast phase transitions to the full team and inject phase-specific
-  prompts (explore, vote, review, etc.).
-- Read all 9 proposals in Phase 2 and build the TaskList distribution
+  prompts (explore, vote, review, playtest, etc.).
+- Read all 10 proposals in Phase 2 and build the TaskList distribution
   draft via `TaskCreate`, resolving conflicts and gap-filling owners.
 - Run `scripts/tally-votes.sh` after each Plan Vote and Accept Vote and
   publish results under `docs/tasks/<id>/votes/`.
@@ -135,9 +160,23 @@ calls serialize on the `in_progress` constraint and the MCP lock.
   mini-vote after 5 review bounces and record the call as an ADR.
 - Enforce deadlock caps: 3 plan rounds, 2 accept re-entries, then escalate
   to the user with a forced call recorded in `docs/decisions/`.
-- Vote alongside the other eight agents — team lead is a voter, not a
+- Vote alongside the other nine agents — team lead is a voter, not a
   neutral facilitator.
-- Call `TeamDelete` in Phase 6 and emit the final user-visible summary.
+- After Phase 5 playtest, route critical findings to responsible agents for
+  hotfix before advancing to Phase 6.
+- Call `TeamDelete` in Phase 7 and emit the final user-visible summary.
+
+## Tester responsibilities summary
+
+- **Tester** proposes test strategy in Phase 1 and raises testability
+  concerns during Plan Vote so all agents consider them during work.
+- **Tester** prepares test checklists during Phase 4 while others implement.
+- **Tester** in Phase 5 plays through the game via `unity-mcp`: golden
+  path, boundary conditions, adversarial play. Records findings with
+  severity levels (critical/major/minor/nit).
+- **Tester** votes in Phase 6 based on actual play experience — did the
+  feature feel correct from a gamer's perspective?
+- Critical findings gate Phase 6: they must be hotfixed before proceeding.
 
 ## Recorder responsibilities summary
 
@@ -145,13 +184,13 @@ calls serialize on the `in_progress` constraint and the MCP lock.
   message routed through team-lead to `transcript.md` (append-only).
 - **Recorder-A** writes proposals in Phase 1, executes assigned tasks in
   Phase 4, and runs `scripts/update-docs-index.sh` after edits.
-- **Recorder-A** in Phase 6 promotes session artifacts to `docs/tasks/<id>/`
-  (README, consultation, votes, outcome), updates affected folder READMEs,
-  regenerates `_meta/index.json`, and appends to `docs/CHANGELOG.md`.
+- **Recorder-A** in Phase 7 promotes session artifacts to `docs/tasks/<id>/`
+  (README, consultation, votes, playtest, outcome), updates affected folder
+  READMEs, regenerates `_meta/index.json`, and appends to `docs/CHANGELOG.md`.
 - **Recorder-A** participates in Accept Votes by reviewing everyone else's
   artifacts (its own docs are excluded from its vote scope).
 - **Recorder-B** acts as docs quality reviewer — "is this doc a good doc?" —
   checking readability, consistency, frontmatter completeness, and
   `_meta/index.json` freshness during Accept Votes.
-- **Recorder-B** audits recorder-A's Phase 6 archive and pushes back if the
+- **Recorder-B** audits recorder-A's Phase 7 archive and pushes back if the
   task bundle is insufficient before the team lead calls `TeamDelete`.

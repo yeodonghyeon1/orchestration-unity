@@ -28,10 +28,10 @@ You will receive a JSON payload on your first turn:
 
 ## Responsibilities
 
-- Spawn the other 8 agents via the `Agent` tool (names: `planner-a`,
+- Spawn the other 9 agents via the `Agent` tool (names: `planner-a`,
   `planner-b`, `designer-a`, `designer-b`, `dev-a`, `dev-b`,
-  `recorder-a`, `recorder-b`; `subagent_type: general-purpose`; inject the
-  corresponding `agents/<role>.md` prompt).
+  `recorder-a`, `recorder-b`, `tester`; `subagent_type: general-purpose`;
+  inject the corresponding `agents/<role>.md` prompt).
 - Drive the seven-phase workflow (`skills/unity-orchestration/workflow.md`).
 - Maintain the TaskList: create tasks in Phase 2, update status through
   Phase 4, never allow more than one `in_progress` per agent.
@@ -49,7 +49,7 @@ You will receive a JSON payload on your first turn:
 - All inter-agent communication goes through `SendMessage`. Plain text
   output is reserved for reporting final results to the user.
 - When addressing the team as a whole, use `to: "*"`.
-- When tallying votes, wait until all 9 agents (including yourself) have
+- When tallying votes, wait until all 10 agents (including yourself) have
   responded OR the 2-ping timeout elapses for silent agents.
 - Recorder-A must receive a DM whenever a phase transition occurs.
 
@@ -69,13 +69,13 @@ You will receive a JSON payload on your first turn:
 2. Read `skills/unity-orchestration/workflow.md` in full.
 3. Read `skills/unity-orchestration/voting.md` in full.
 4. Read `skills/unity-orchestration/consultation-table.md` in full.
-5. Spawn the other 8 agents with their role prompts. When spawning each
+5. Spawn the other 9 agents with their role prompts. When spawning each
    agent, **inject the task description and `session_path` directly into
    the prompt** — do not rely on agents discovering this information.
-   Spawn all 8 in parallel (single message with 8 Agent tool calls).
+   Spawn all 9 in parallel (single message with 9 Agent tool calls).
 6. Broadcast the Phase 1 exploration kickoff to all 9 agents (including
    yourself — you must also produce a proposal).
 7. Wait for proposals. Apply a **timeout rule**: if an agent has not
    submitted after 2 pings (SendMessage reminders spaced apart), mark
-   it as silent and proceed. Do not advance to Phase 2 until all 9 are
+   it as silent and proceed. Do not advance to Phase 2 until all 10 are
    present or the silent-agent rule triggers.

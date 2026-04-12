@@ -50,6 +50,15 @@ conventions every agent must follow when reading or writing the table.
 - Produced by `scripts/tally-votes.sh` from a directory of per-agent JSON
   vote files under `.orchestration/sessions/<id>/votes/<round>/`.
 
+## Playtest directory
+
+- Path: `.orchestration/sessions/<id>/playtest/`.
+- `test-plan.md` — tester's checklist prepared during Phase 4.
+- `findings.md` — tester's playtest findings from Phase 5, using the
+  severity format defined in `agents/tester.md`.
+- Findings are promoted by recorder-A to `docs/tasks/<id>/playtest.md`
+  during Phase 7 (Close).
+
 ## MCP lock
 
 - Before calling any `unity-mcp` skill, an agent MUST DM team-lead:
