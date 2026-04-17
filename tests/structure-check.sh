@@ -204,6 +204,11 @@ check_file "skills/notion-sync/SKILL.md"
 check_file "skills/notion-sync/change-detection.md"
 check_file "skills/notion-sync/templates/notion-doc-frontmatter.md"
 
+# --- v1.0 docs-refinement skill scaffold ---
+check_file "skills/docs-refinement/SKILL.md"
+check_file "skills/docs-refinement/cross-ref-rules.md"
+check_file "skills/docs-refinement/templates/develop-doc-frontmatter.md"
+
 # --- v1.0 integration tests ---
 check_file "tests/integration/test-notion-sync.sh"
 
