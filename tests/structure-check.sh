@@ -213,6 +213,7 @@ check_file "skills/docs-refinement/templates/develop-doc-frontmatter.md"
 
 # --- v1.0 integration tests ---
 check_file "tests/integration/test-notion-sync.sh"
+check_file "tests/integration/test-docs-refinement.sh"
 
 # --- Report -------------------------------------------------------------
 if [[ $ERRORS -gt 0 ]]; then
