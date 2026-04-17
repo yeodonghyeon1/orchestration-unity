@@ -123,6 +123,8 @@ done
 for f in \
   commands/unity-orchestration.md \
   commands/notion-sync.md \
+  commands/docs-refinement.md \
+  commands/docs-update.md \
   agents/unity-orchestrator.md \
   skills/unity-orchestration/templates/task-table.template.md \
   skills/unity-orchestration/templates/vote-message.template.json \
