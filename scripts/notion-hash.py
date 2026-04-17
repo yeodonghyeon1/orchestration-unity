@@ -29,7 +29,16 @@ VOLATILE_KEYS = {
 
 
 def normalize(obj):
-    """Recursively drop volatile keys; normalize strings."""
+    """Recursively drop volatile keys and normalize string whitespace.
+
+    String normalization rules:
+      - Trailing whitespace is stripped from each line.
+      - Trailing newlines are removed (splitlines() discards them).
+
+    This means 'hello\\n' and 'hello' normalize identically — intentional
+    for Notion block content where trailing newlines are structural
+    (block boundaries) rather than semantic.
+    """
     if isinstance(obj, dict):
         return {
             k: normalize(v)
@@ -44,7 +53,10 @@ def normalize(obj):
 
 
 def compute_hash(payload: str) -> str:
-    data = json.loads(payload)
+    try:
+        data = json.loads(payload)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"invalid JSON: {e}") from e
     canonical = json.dumps(
         normalize(data),
         sort_keys=True,
@@ -64,7 +76,11 @@ def main() -> int:
     if not payload.strip():
         print("error: empty input", file=sys.stderr)
         return 1
-    print(compute_hash(payload))
+    try:
+        print(compute_hash(payload))
+    except ValueError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 1
     return 0
 
 

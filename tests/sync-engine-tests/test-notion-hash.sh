@@ -48,10 +48,32 @@ test_output_prefix() {
     pass "output has sha256: prefix"
 }
 
+test_empty_input_fails() {
+    local out exit_code=0
+    out="$(echo '' | python3 "$H" 2>&1)" || exit_code=$?
+    [ "$exit_code" -eq 1 ] || fail "empty input should exit 1 (got $exit_code)"
+    [[ "$out" == *"error"* ]] || fail "empty input should print error (got: $out)"
+    pass "empty input → exit 1 with error"
+}
+
+test_invalid_json_fails() {
+    local out exit_code=0
+    out="$(echo 'not valid json' | python3 "$H" 2>&1)" || exit_code=$?
+    [ "$exit_code" -eq 1 ] || fail "invalid JSON should exit 1 (got $exit_code)"
+    [[ "$out" == *"invalid JSON"* ]] || fail "invalid JSON should print 'invalid JSON' (got: $out)"
+    # Traceback must NOT appear in stderr
+    if [[ "$out" == *"Traceback"* ]]; then
+        fail "traceback leaked to stderr (should be clean error)"
+    fi
+    pass "invalid JSON → clean error, no traceback"
+}
+
 test_identical_content_same_hash
 test_volatile_fields_ignored
 test_different_content_different_hash
 test_key_order_independent
 test_output_prefix
+test_empty_input_fails
+test_invalid_json_fails
 
 echo "All notion-hash tests passed"
