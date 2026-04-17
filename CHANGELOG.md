@@ -4,7 +4,28 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [Unreleased] — v1.0 roadmap
+
+Progressing toward v1.0.0 — a Notion-driven Superpowers pipeline. See
+`docs/superpowers/specs/2026-04-18-orchestration-unity-v1-design.md`.
+
+### Slice A (MVP Notion Sync) — complete in 1.0.0-alpha.1
+- Added `scripts/notion-hash.py` — deterministic SHA256 of Notion content (excludes volatile fields)
+- Added `scripts/page-map.py` — Notion page → folder mapping manager with atomic writes
+- Added `scripts/sync-state.py` — `_meta/sync-state.json` management (pages + orphans)
+- Moved `scripts/init-workspace.sh` to top-level `scripts/` and extended for dual-tree seeding (`notion_docs/` + `develop_docs/`)
+- Added `skills/notion-sync/` — skill with 4-step change detection pipeline (SKILL.md, change-detection.md, templates/)
+- Added `commands/notion-sync.md` — `/notion-sync` slash command
+- Added fixtures at `tests/fixture/mock-notion-responses/` (page-list, 3 page responses)
+- Added unit tests for hashing, page-map, sync-state (with coverage for TSV output, duplicate rejection, missing keys)
+- Added integration test `tests/integration/test-notion-sync.sh` covering full pipeline with fixtures
+- Set git executable bits (`100755`) on all scripts and tests
+
+### Planned (upcoming slices)
+- Slice B: `/docs-refinement` + `/docs-update` meta command + BFS impact graph
+- Slice C: Section 17 living knowledge base (provenance markers, code → docs updates)
+- Slice D: `/unity-orchestration` Superpowers chain rewrite (removes 10-agent consensus)
+- Slice E: v0.2 → v1.0 migration, README replacement, 1.0.0 release tag
 
 ## [0.2.0] — 2026-04-13
 
