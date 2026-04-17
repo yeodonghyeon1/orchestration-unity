@@ -162,7 +162,8 @@ for s in \
   tests/structure-check.sh \
   tests/scripts/init-workspace.test.sh \
   tests/scripts/tally-votes.test.sh \
-  tests/scripts/update-docs-index.test.sh; do
+  tests/scripts/update-docs-index.test.sh \
+  tests/integration/test-notion-sync.sh; do
   if [[ -f "$ROOT/$s" && ! -x "$ROOT/$s" ]]; then
     err "$s: not executable (run: chmod +x $s)"
   fi
@@ -202,6 +203,9 @@ test_dual_tree_init
 check_file "skills/notion-sync/SKILL.md"
 check_file "skills/notion-sync/change-detection.md"
 check_file "skills/notion-sync/templates/notion-doc-frontmatter.md"
+
+# --- v1.0 integration tests ---
+check_file "tests/integration/test-notion-sync.sh"
 
 # --- Report -------------------------------------------------------------
 if [[ $ERRORS -gt 0 ]]; then
