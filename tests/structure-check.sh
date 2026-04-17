@@ -122,6 +122,7 @@ done
 # --- Files that must simply exist ---------------------------------------
 for f in \
   commands/unity-orchestration.md \
+  commands/notion-sync.md \
   agents/unity-orchestrator.md \
   skills/unity-orchestration/templates/task-table.template.md \
   skills/unity-orchestration/templates/vote-message.template.json \
