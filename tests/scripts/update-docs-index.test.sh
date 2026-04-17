@@ -4,7 +4,7 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
-SCRIPT="$ROOT/skills/unity-orchestration/scripts/update-docs-index.py"
+SCRIPT="$ROOT/scripts/update-docs-index.py"
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT

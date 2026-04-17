@@ -133,8 +133,8 @@ for f in \
   skills/unity-orchestration/templates/docs-tree/tasks/.gitkeep \
   skills/unity-orchestration/templates/docs-tree/CHANGELOG.md \
   scripts/init-workspace.sh \
+  scripts/update-docs-index.py \
   skills/unity-orchestration/scripts/tally-votes.sh \
-  skills/unity-orchestration/scripts/update-docs-index.py \
   tests/scripts/init-workspace.test.sh \
   tests/scripts/tally-votes.test.sh \
   tests/scripts/update-docs-index.test.sh; do
@@ -157,8 +157,8 @@ done
 # --- Script executable bits --------------------------------------------
 for s in \
   scripts/init-workspace.sh \
+  scripts/update-docs-index.py \
   skills/unity-orchestration/scripts/tally-votes.sh \
-  skills/unity-orchestration/scripts/update-docs-index.py \
   tests/structure-check.sh \
   tests/scripts/init-workspace.test.sh \
   tests/scripts/tally-votes.test.sh \
