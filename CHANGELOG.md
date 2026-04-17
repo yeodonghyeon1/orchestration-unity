@@ -21,8 +21,16 @@ Progressing toward v1.0.0 — a Notion-driven Superpowers pipeline. See
 - Added integration test `tests/integration/test-notion-sync.sh` covering full pipeline with fixtures
 - Set git executable bits (`100755`) on all scripts and tests
 
+### Slice B (Refinement + /docs-update) — complete in 1.0.0-alpha.2
+- Added `scripts/docs-index.py` — builds `_meta/index.json` with tree + reverse_index (schema v2 with `_self` bug fix from v0.2.0)
+- Added `scripts/bfs-impact.py` — BFS traversal over reverse_index for change-impact lookup
+- Moved `scripts/update-docs-index.py` to top-level scripts/ and replaced with forwarding shim to `docs-index.py`
+- Added `skills/docs-refinement/` — skill with 3-phase algorithm (Index → Impact → Refine), cross-ref rules, frontmatter template
+- Added `commands/docs-refinement.md` — `/docs-refinement` slash command
+- Added `commands/docs-update.md` — `/docs-update` meta command (chains sync → refine → branch commit → push)
+- Added fixture `tests/fixture/develop-docs-sample/` and integration test `tests/integration/test-docs-refinement.sh`
+
 ### Planned (upcoming slices)
-- Slice B: `/docs-refinement` + `/docs-update` meta command + BFS impact graph
 - Slice C: Section 17 living knowledge base (provenance markers, code → docs updates)
 - Slice D: `/unity-orchestration` Superpowers chain rewrite (removes 10-agent consensus)
 - Slice E: v0.2 → v1.0 migration, README replacement, 1.0.0 release tag

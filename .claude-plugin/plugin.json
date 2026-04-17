@@ -1,7 +1,7 @@
 {
   "name": "unity-orchestration",
   "description": "10-agent consensus team for Unity game development: plan/accept voting, peer review, playtesting, AI-readable docs tree.",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "author": {
     "name": "yeodonghyeon1",
     "email": "ydh744@naver.com"
