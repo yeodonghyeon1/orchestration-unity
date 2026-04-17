@@ -13,7 +13,7 @@ fi
 
 PROJECT_ROOT="$1"
 TASK_SLUG="$2"
-PLUGIN_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+PLUGIN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TEMPLATE_DIR="$PLUGIN_ROOT/skills/unity-orchestration/templates/docs-tree"
 
 if [[ ! -d "$PROJECT_ROOT" ]]; then
@@ -54,3 +54,26 @@ if [[ ! -d "$PROJECT_ROOT/docs" ]]; then
 fi
 
 echo "$SESSION_DIR"
+
+# --- v1.0 dual-tree additions ---
+init_dual_trees() {
+    local root="$1"
+    mkdir -p "$root/notion_docs/_meta" "$root/develop_docs/_meta"
+
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+    local sync_state="$root/notion_docs/_meta/sync-state.json"
+    local page_map="$root/notion_docs/_meta/page-map.json"
+
+    if [ ! -f "$sync_state" ]; then
+        python3 "$script_dir/sync-state.py" init "$sync_state"
+        echo "seeded $sync_state"
+    fi
+    if [ ! -f "$page_map" ]; then
+        python3 "$script_dir/page-map.py" init "$page_map"
+        echo "seeded $page_map"
+    fi
+}
+
+init_dual_trees "${1:-.}"

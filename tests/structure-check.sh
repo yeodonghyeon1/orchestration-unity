@@ -131,7 +131,7 @@ for f in \
   skills/unity-orchestration/templates/docs-tree/decisions/.gitkeep \
   skills/unity-orchestration/templates/docs-tree/tasks/.gitkeep \
   skills/unity-orchestration/templates/docs-tree/CHANGELOG.md \
-  skills/unity-orchestration/scripts/init-workspace.sh \
+  scripts/init-workspace.sh \
   skills/unity-orchestration/scripts/tally-votes.sh \
   skills/unity-orchestration/scripts/update-docs-index.py \
   tests/scripts/init-workspace.test.sh \
@@ -155,7 +155,7 @@ done
 
 # --- Script executable bits --------------------------------------------
 for s in \
-  skills/unity-orchestration/scripts/init-workspace.sh \
+  scripts/init-workspace.sh \
   skills/unity-orchestration/scripts/tally-votes.sh \
   skills/unity-orchestration/scripts/update-docs-index.py \
   tests/structure-check.sh \
@@ -166,6 +166,36 @@ for s in \
     err "$s: not executable (run: chmod +x $s)"
   fi
 done
+
+# --- v1.0 dual-tree init test ---
+test_dual_tree_init() {
+    local tmp
+    tmp="$(mktemp -d)"
+    # Convert to Windows-style path for python3 if on git-bash
+    if command -v cygpath >/dev/null 2>&1; then
+        tmp="$(cygpath -m "$tmp")"
+    fi
+    bash "$ROOT/scripts/init-workspace.sh" "$tmp" "test-slug" >/dev/null 2>&1 || true
+    if [[ ! -d "$tmp/notion_docs/_meta" ]]; then
+        err "dual-tree init: notion_docs/_meta missing"
+        return 1
+    fi
+    if [[ ! -d "$tmp/develop_docs/_meta" ]]; then
+        err "dual-tree init: develop_docs/_meta missing"
+        return 1
+    fi
+    if [[ ! -f "$tmp/notion_docs/_meta/sync-state.json" ]]; then
+        err "dual-tree init: sync-state.json not seeded"
+        return 1
+    fi
+    if [[ ! -f "$tmp/notion_docs/_meta/page-map.json" ]]; then
+        err "dual-tree init: page-map.json not seeded"
+        return 1
+    fi
+    rm -rf "$tmp"
+    ok "dual-tree init (notion_docs + develop_docs + _meta files)"
+}
+test_dual_tree_init
 
 # --- Report -------------------------------------------------------------
 if [[ $ERRORS -gt 0 ]]; then
