@@ -197,6 +197,11 @@ test_dual_tree_init() {
 }
 test_dual_tree_init
 
+# --- v1.0 notion-sync skill scaffold ---
+check_file "skills/notion-sync/SKILL.md"
+check_file "skills/notion-sync/change-detection.md"
+check_file "skills/notion-sync/templates/notion-doc-frontmatter.md"
+
 # --- Report -------------------------------------------------------------
 if [[ $ERRORS -gt 0 ]]; then
   echo
