@@ -45,9 +45,44 @@ test_reserved_names_rejected() {
     pass "reserved names rejected"
 }
 
+test_list_output() {
+    local f="$TMPDIR/page-map-list.json"
+    python3 "$PM" init "$f"
+    python3 "$PM" add "$f" "uuid-A" "개발" "dev"
+    python3 "$PM" add "$f" "uuid-B" "아트" "art"
+    local count
+    count="$(python3 "$PM" list "$f" | wc -l)"
+    [ "$count" -eq 2 ] || fail "list should return 2 lines, got $count"
+    python3 "$PM" list "$f" | grep -q "uuid-A" || fail "list missing uuid-A"
+    python3 "$PM" list "$f" | grep -q "uuid-B" || fail "list missing uuid-B"
+    pass "list prints TSV of all mappings"
+}
+
+test_duplicate_folder_rejected() {
+    local f="$TMPDIR/page-map-dup.json"
+    python3 "$PM" init "$f"
+    python3 "$PM" add "$f" "uuid-A" "개발" "dev"
+    if python3 "$PM" add "$f" "uuid-B" "뭔가다른거" "dev" 2>/dev/null; then
+        fail "should reject folder 'dev' mapped to different page"
+    fi
+    pass "duplicate folder rejected for different page"
+}
+
+test_get_missing_returns_nonzero() {
+    local f="$TMPDIR/page-map-getmiss.json"
+    python3 "$PM" init "$f"
+    local exit_code=0
+    python3 "$PM" get "$f" "nonexistent-uuid" 2>&1 >/dev/null || exit_code=$?
+    [ "$exit_code" -eq 1 ] || fail "get on missing page should exit 1 (got $exit_code)"
+    pass "get missing page → exit 1"
+}
+
 test_init_creates_empty_map
 test_add_mapping
 test_slugify_korean
 test_reserved_names_rejected
+test_list_output
+test_duplicate_folder_rejected
+test_get_missing_returns_nonzero
 
 echo "All page-map tests passed"

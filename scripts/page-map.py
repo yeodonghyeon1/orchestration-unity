@@ -10,9 +10,22 @@ Subcommands:
 """
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
+
+
+def _atomic_write(path: str, data: dict) -> None:
+    """Write JSON atomically: temp file + rename. Windows-safe via os.replace."""
+    tmp = f"{path}.tmp"
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    Path(tmp).write_text(
+        json.dumps(data, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    os.replace(tmp, path)
+
 
 RESERVED_FOLDERS = {"_meta"}
 
@@ -33,8 +46,7 @@ def ensure_not_reserved(folder: str) -> None:
 
 def cmd_init(path: str) -> int:
     data = {"schema_version": 1, "mappings": [], "auto_slugify": True}
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    Path(path).write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    _atomic_write(path, data)
     return 0
 
 
@@ -55,7 +67,7 @@ def cmd_add(path: str, page_id: str, title: str, folder: str) -> int:
             "notion_title": title,
             "folder": folder,
         })
-    Path(path).write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    _atomic_write(path, data)
     return 0
 
 
@@ -65,7 +77,7 @@ def cmd_get(path: str, page_id: str) -> int:
         if m["notion_page_id"] == page_id:
             print(m["folder"])
             return 0
-    print("", end="")
+    print(f"error: page not found: {page_id}", file=sys.stderr)
     return 1
 
 
@@ -97,7 +109,7 @@ def main() -> int:
             return cmd_list(sys.argv[2])
         if sub == "slugify":
             return cmd_slugify(sys.argv[2])
-    except (IndexError, ValueError, FileNotFoundError, OSError, json.JSONDecodeError) as e:
+    except (IndexError, ValueError, KeyError, FileNotFoundError, OSError, json.JSONDecodeError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
     print(f"unknown subcommand: {sub}", file=sys.stderr)
