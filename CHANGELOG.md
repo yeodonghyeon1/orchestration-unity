@@ -4,6 +4,13 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [2.1.0] — 2026-04-19
+
+### Changed
+- `notion-bootstrap` default parts: now `planning / development / art` (was `development / art / design`).
+  - Rationale: "Game design (기획)" and "Graphic/UX design" are different domains and should not share a single `design` part. After usage feedback, the typical game-team split (Planner / Developer / Artist) is restored, and Graphic+UX design is merged into Art.
+  - Users can still override with `--parts key1=label1,...`.
+
 ## [2.0.0] — 2026-04-19
 
 ### BREAKING

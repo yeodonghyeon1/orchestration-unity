@@ -26,9 +26,9 @@ page. Creates 3 part pages × 2 DBs = 6 databases.
 ## Default parts
 
 If the user did not override, use three parts:
-- `development` — "개발 (Development)" — 🛠
-- `art` — "아트 (Art)" — 🎨
-- `design` — "디자인 (Design)" — 📐
+- `planning` — "기획 (Planning)" — 📋  (Game design, world, story, level planning)
+- `development` — "개발 (Development)" — 🛠  (Unity C# code, systems, build, tests)
+- `art` — "아트 (Art)" — 🎨  (Asset production **+** Graphic/UX design — visual direction, UI wireframes, style guides)
 
 To override, pass `--parts key1=label1,key2=label2,...`.
 
@@ -42,9 +42,9 @@ Present to the user:
 plan:
   main: <url>
   parts:
+    - planning    → "기획 (Planning)"     (📋)
     - development → "개발 (Development)"  (🛠)
-    - art         → "아트 (Art)"          (🎨)
-    - design      → "디자인 (Design)"     (📐)
+    - art         → "아트 (Art)"          (🎨)  [includes Graphic+UX design]
   per part:
     📘 메인 DB, 💡 자료&아이디어 DB
   total to create: 3 pages + 6 databases
