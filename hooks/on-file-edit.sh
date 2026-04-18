@@ -11,7 +11,7 @@ file=$(printf '%s' "$payload" | jq -r '.tool_input.file_path // empty' 2>/dev/nu
 
 case "$file" in
   */Assets/*.cs|*/Assets/**/*.cs)
-    msg="[orchestration-unity] Assets C# edit detected ($file). Run /wiki-sync-code to update llm_wiki/tech/."
+    msg="[orchestration-unity] Assets C# edit detected ($file). Run /wiki-sync-code to update docs/llm_wiki/tech/."
     ;;
   */llm_wiki/*.md|*/llm_wiki/**/*.md)
     msg="[orchestration-unity] llm_wiki edit detected ($file). Run /notion-push --dry-run to review before pushing."

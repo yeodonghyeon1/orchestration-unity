@@ -18,7 +18,7 @@ drives everything. Sub-agents are spawned only via
 There is no voting or consensus — Superpowers discipline skills handle
 quality gates.
 
-Key v2 change: **context comes from `llm_wiki/`, not `develop_docs/`**.
+Key v2 change: **context comes from `docs/llm_wiki/`, not `develop_docs/`**.
 The wiki is LLM-maintained; sources of truth live in Notion's 메인 DB
 rows and `/wiki-ingest` keeps the wiki current.
 
@@ -27,7 +27,7 @@ rows and `/wiki-ingest` keeps the wiki current.
 Invoke `superpowers:brainstorming`. Let it run its full HARD-GATE flow —
 context exploration, clarifying questions (one at a time), 2-3
 alternative approaches, design sections with user approval, final spec
-at `llm_wiki/specs/YYYY-MM-DD-<topic>-design.md`.
+at `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`.
 
 On spec approval, brainstorming hands off to step 3 (writing-plans).
 
@@ -35,8 +35,8 @@ On spec approval, brainstorming hands off to step 3 (writing-plans).
 
 Before brainstorming asks clarifying questions, pre-load the wiki:
 
-1. Read `llm_wiki/index.md` in full.
-2. Read last 20 lines of `llm_wiki/log.md` (recent activity).
+1. Read `docs/llm_wiki/index.md` in full.
+2. Read last 20 lines of `docs/llm_wiki/log.md` (recent activity).
 3. Extract task keywords; match against index titles/summaries.
 4. Read matched pages and follow their cross-links up to 2 hops (cap
    15 pages).
@@ -48,7 +48,7 @@ layer is only touched indirectly via `/wiki-ingest`.
 ## Step 3 — Writing plans
 
 `superpowers:writing-plans` produces
-`llm_wiki/plans/YYYY-MM-DD-<slug>.md` with bite-sized tasks
+`docs/superpowers/plans/YYYY-MM-DD-<slug>.md` with bite-sized tasks
 (2-5 min each), TDD steps, and exact file paths. Plan references the
 wiki pages loaded in Step 2.
 
@@ -114,9 +114,9 @@ This:
 - Finds modified `Assets/**/*.cs` files (git diff).
 - Extracts public signatures + XML docs.
 - Regenerates `<!-- source: code:<path> -->` sections in
-  `llm_wiki/tech/**`.
-- Creates `llm_wiki/tech/auto/<slug>.md` for orphaned files.
-- Appends `code-sync` entry to `llm_wiki/log.md`.
+  `docs/llm_wiki/tech/**`.
+- Creates `docs/llm_wiki/tech/auto/<slug>.md` for orphaned files.
+- Appends `code-sync` entry to `docs/llm_wiki/log.md`.
 
 Commit the wiki changes on the same feature branch as the code.
 Optionally run `/notion-push --dry-run` to preview pushing the wiki

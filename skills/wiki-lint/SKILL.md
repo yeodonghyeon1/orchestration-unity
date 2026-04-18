@@ -12,19 +12,19 @@ by default.
 
 ## Pre-flight
 
-1. `llm_wiki/index.md` exists.
-2. `raw/_meta/sync-state.json` exists (needed for staleness checks).
+1. `docs/llm_wiki/index.md` exists.
+2. `docs/raw/_meta/sync-state.json` exists (needed for staleness checks).
 
 ## Checks
 
 ### 1. Orphan pages
 Pages with no inbound link (no other wiki file references them). Use
-Grep across `llm_wiki/**/*.md` for each page's id. Zero matches outside
+Grep across `docs/llm_wiki/**/*.md` for each page's id. Zero matches outside
 itself → orphan.
 
 ### 2. Missing index entries
-Files under `llm_wiki/<category>/*.md` that are **not** listed in
-`llm_wiki/index.md`. Suggest index refresh.
+Files under `docs/llm_wiki/<category>/*.md` that are **not** listed in
+`docs/llm_wiki/index.md`. Suggest index refresh.
 
 Scan these categories (whichever exist in the project):
 `entities/`, `concepts/`, `narrative/`, `tech/`, `plans/`, `specs/`,
@@ -53,7 +53,7 @@ Raw main rows that have no `<!-- source: notion:<row-id> -->` block
 anywhere in the wiki. They were ingested but never incorporated.
 
 ### 8. Empty categories
-`llm_wiki/<category>/` directories with zero files. Likely an
+`docs/llm_wiki/<category>/` directories with zero files. Likely an
 index-category mismatch.
 
 ## Report format
@@ -67,24 +67,24 @@ wiki-lint report  (YYYY-MM-DD HH:MM)
   - ...
 
 [MED]    N orphan pages
-  - llm_wiki/concepts/legacy-thing.md
+  - docs/llm_wiki/concepts/legacy-thing.md
 
 [MED]    N stale drafts (> 14d)
   - row: <row-id> "던전 레이아웃" (18 days)
 
 [LOW]    N broken links
-  - llm_wiki/entities/eyn.md → [[old-ref]]  (target missing)
+  - docs/llm_wiki/entities/eyn.md → [[old-ref]]  (target missing)
 
 [LOW]    N unclaimed raw rows
   - row: <row-id> "NPC 대사 표"
 
 [INFO]   N empty categories
-  - llm_wiki/concepts/ (0 files)
+  - docs/llm_wiki/concepts/ (0 files)
 
 Suggested actions:
   1. Fix HIGH contradictions — ask author to clarify.
   2. Run /wiki-ingest to bring stale drafts into wiki (if they have log entries).
-  3. Archive orphans to llm_wiki/archive/ if truly unused.
+  3. Archive orphans to docs/llm_wiki/archive/ if truly unused.
   4. Rerun /wiki-lint after changes.
 ```
 
@@ -101,7 +101,7 @@ Only if user passes `--fix`:
 - Do NOT delete pages automatically.
 - Do NOT resolve contradictions silently — always surface them.
 - Do NOT call Notion MCP (lint is purely local).
-- Do NOT modify `raw/**`.
+- Do NOT modify `docs/raw/**`.
 
 ## Arguments
 

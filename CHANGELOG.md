@@ -4,6 +4,37 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [2.4.0] — 2026-04-19
+
+### Changed — unified project root under `docs/`
+- All LLM-facing trees now live under a single `docs/` folder:
+  - `raw/` → `docs/raw/`
+  - `llm_wiki/` → `docs/llm_wiki/`
+  - Superpowers `docs/superpowers/` (plans/, specs/) stays as-is
+- Resolves the tension in v2.3.0 where superpowers `brainstorming` and
+  `writing-plans` hardcode `docs/superpowers/{plans,specs}/` paths in
+  their SKILL.md. Rolling plans/specs into `llm_wiki/` would have
+  required forking superpowers; instead, we move **our** trees to live
+  next to it.
+- `init-wiki` SKILL: now seeds `docs/raw/`, `docs/llm_wiki/`, and
+  reserves `docs/superpowers/plans/` + `docs/superpowers/specs/` (with
+  `.gitkeep`). Index template no longer lists Plans/Specs (they live
+  under `docs/superpowers/`, separate concern).
+- Updated all plugin skills + commands + hook script: every `raw/`
+  reference → `docs/raw/`, every `llm_wiki/` reference → `docs/llm_wiki/`.
+- `wiki-lint` still scans plans/specs/explorations, but expects them
+  under `docs/superpowers/` (plans, specs) and `docs/llm_wiki/explorations/`.
+
+### Consumer migration
+Projects coming from v2.3.0 should:
+```bash
+mkdir -p docs
+git mv raw docs/raw
+git mv llm_wiki docs/llm_wiki
+# If llm_wiki/plans/, llm_wiki/specs/ exist from v2.3.0, move to docs/superpowers/
+```
+Plus update any CLAUDE.md references.
+
 ## [2.3.0] — 2026-04-19
 
 ### Changed

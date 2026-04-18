@@ -1,5 +1,5 @@
 ---
-description: Audit llm_wiki/ for orphans, stale drafts, contradictions, broken links, and provenance drift. Report-only by default.
+description: Audit docs/llm_wiki/ for orphans, stale drafts, contradictions, broken links, and provenance drift. Report-only by default.
 argument-hint: [--check <id>] [--fix]
 ---
 

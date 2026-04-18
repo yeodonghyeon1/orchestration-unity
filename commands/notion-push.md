@@ -1,11 +1,11 @@
 ---
-description: Publish llm_wiki/ changes back to the Notion 메인 DB rows they came from. Always shows a dry-run plan first.
+description: Publish docs/llm_wiki/ changes back to the Notion 메인 DB rows they came from. Always shows a dry-run plan first.
 argument-hint: [--all|--files <path>...|--dry-run|--prune-orphans]
 ---
 
 # /notion-push
 
-Reverse sync — `llm_wiki/` → Notion 메인 DB rows. Use after
+Reverse sync — `docs/llm_wiki/` → Notion 메인 DB rows. Use after
 `/wiki-sync-code` or manual wiki edits.
 
 Invoke the `notion-push` skill:

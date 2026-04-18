@@ -1,32 +1,32 @@
 ---
 name: wiki-ingest
-description: Use when the user invokes /wiki-ingest or asks to pull Notion changes into the local wiki. Queries each part's 메인 DB for rows whose last_edited_time is after sync-state.last_main_seen[part], paginating newest-first and stopping when it reaches unchanged rows. Mirrors row bodies to raw/<part>/main/*.md, refines affected llm_wiki pages, updates index.md + log.md.
+description: Use when the user invokes /wiki-ingest or asks to pull Notion changes into the local wiki. Queries each part's 메인 DB for rows whose last_edited_time is after sync-state.last_main_seen[part], paginating newest-first and stopping when it reaches unchanged rows. Mirrors row bodies to docs/raw/<part>/main/*.md, refines affected llm_wiki pages, updates index.md + log.md.
 ---
 
 # wiki-ingest
 
 Single entry point for Notion → local sync. No log DB; change
 detection is driven by 메인 DB's `last_edited_time` against the
-per-part cursor stored in `raw/_meta/sync-state.json`.
+per-part cursor stored in `docs/raw/_meta/sync-state.json`.
 
 **Announce at start:** "I'm using the wiki-ingest skill to pull Notion main-row changes into the wiki."
 
 ## Pre-flight
 
-1. `raw/_meta/sync-state.json`, `raw/_meta/db-map.json` exist.
+1. `docs/raw/_meta/sync-state.json`, `docs/raw/_meta/db-map.json` exist.
    - `db-map.schema_version` must be ≥ 2 (no log field). If it's older,
      abort and suggest re-running `/notion-bootstrap` or manually
      removing the `log` keys.
 2. `db-map.json` has at least one part with a `main` data source id.
 3. Notion MCP tools available.
-4. No uncommitted changes in `raw/` or `llm_wiki/`. If dirty, ask
+4. No uncommitted changes in `docs/raw/` or `docs/llm_wiki/`. If dirty, ask
    whether to stash.
 5. **LFS setup check** (warn-only, doesn't abort):
    - `.gitattributes` exists at repo root and contains at least one LFS
      filter for image extensions (`filter=lfs`). If not, print a
      one-liner warning suggesting:
      ```
-     echo 'llm_wiki/images/** filter=lfs diff=lfs merge=lfs -text' >> .gitattributes
+     echo 'docs/llm_wiki/images/** filter=lfs diff=lfs merge=lfs -text' >> .gitattributes
      echo '*.png filter=lfs diff=lfs merge=lfs -text' >> .gitattributes
      git lfs install
      ```
@@ -38,10 +38,10 @@ per-part cursor stored in `raw/_meta/sync-state.json`.
 
 ### Phase 1 — Load state
 
-Read `raw/_meta/sync-state.json`:
+Read `docs/raw/_meta/sync-state.json`:
 - `last_main_seen[part]` (ISO-8601 string or null for first-time).
 
-Read `raw/_meta/db-map.json`:
+Read `docs/raw/_meta/db-map.json`:
 - For each part: `main` (data source id), `notes` (data source id),
   `page` (part page id).
 
@@ -73,7 +73,7 @@ For each surviving candidate:
 2. Extract `{title, 상태, 태그, last_edited_time, body_markdown, url}`.
 3. Compute slug = kebab-case of title. Append `-<short-id>` if slug
    collides within the part.
-4. Write `raw/<part>/main/<slug>.md` with frontmatter:
+4. Write `docs/raw/<part>/main/<slug>.md` with frontmatter:
    ```yaml
    ---
    id: raw.<part>.<slug>
@@ -94,9 +94,9 @@ For each surviving candidate:
 
 Notion image URLs are signed S3 links (`prod-files-secure.s3...`) that
 expire in ~1 hour. To preserve them permanently, localize each image
-into `llm_wiki/images/<part>/<slug>/` (tracked by git LFS via the
+into `docs/llm_wiki/images/<part>/<slug>/` (tracked by git LFS via the
 project's `.gitattributes`). Run this before writing the raw file in
-step 4 above so links inside `raw/<part>/main/<slug>.md` are already
+step 4 above so links inside `docs/raw/<part>/main/<slug>.md` are already
 local paths.
 
 Skip entirely if `--no-images` is passed.
@@ -109,7 +109,7 @@ Skip entirely if `--no-images` is passed.
    Preserve discovery order → `urls[]` with 1-based indexes.
 
 2. **Pick target directory**:
-   `llm_wiki/images/<part>/<slug>/` — mkdir -p if missing.
+   `docs/llm_wiki/images/<part>/<slug>/` — mkdir -p if missing.
 
 3. **For each URL** (`idx`, `url`):
    a. Determine extension: parse URL path for `.png|.jpg|.jpeg|.gif|.webp|.mp4|.mov|.webm`.
@@ -120,7 +120,7 @@ Skip entirely if `--no-images` is passed.
    c. Download:
       ```
       curl -sSL --max-time 30 --retry 1 --max-filesize 104857600 -o \
-        "llm_wiki/images/<part>/<slug>/<filename>" "<url>"
+        "docs/llm_wiki/images/<part>/<slug>/<filename>" "<url>"
       ```
       `--max-filesize 104857600` enforces a **100 MB hard cap** during
       download. curl aborts mid-stream and returns exit 63 if the
@@ -129,9 +129,9 @@ Skip entirely if `--no-images` is passed.
    d. **Post-download size check** (defense in depth for missing
       Content-Length):
       ```
-      size=$(wc -c < "llm_wiki/images/<part>/<slug>/<filename>")
+      size=$(wc -c < "docs/llm_wiki/images/<part>/<slug>/<filename>")
       if [ "$size" -gt 104857600 ]; then
-        rm "llm_wiki/images/<part>/<slug>/<filename>"
+        rm "docs/llm_wiki/images/<part>/<slug>/<filename>"
         append to download_failures: {url, reason: "too_large (>100MB)"}
         keep original URL in body
       fi
@@ -142,15 +142,15 @@ Skip entirely if `--no-images` is passed.
       - Append `{url, reason}` to `download_failures[]` for final report.
 
 4. **Rewrite URLs** in the body text:
-   - `raw/<part>/main/<slug>.md` sees the image at
+   - `docs/raw/<part>/main/<slug>.md` sees the image at
      `../../llm_wiki/images/<part>/<slug>/<filename>`
-     (3 levels up from `raw/<part>/main/` to project root, then into llm_wiki).
-   - When sub-agents later refine into `llm_wiki/<category>/*.md`, they
+     (3 levels up from `docs/raw/<part>/main/` to project root, then into llm_wiki).
+   - When sub-agents later refine into `docs/llm_wiki/<category>/*.md`, they
      compute their own relative path (`../images/<part>/<slug>/<filename>`).
    - Preserve the original `alt` text verbatim.
 
 5. **Skip cases**:
-   - URL already starts with `../llm_wiki/images/` or `llm_wiki/images/`
+   - URL already starts with `../llm_wiki/images/` or `docs/llm_wiki/images/`
      (already localized) — no-op.
    - `data:image/...;base64,...` inline — no-op (not a remote URL).
    - File size > 100MB after download — **deleted and skipped**
@@ -160,7 +160,7 @@ Skip entirely if `--no-images` is passed.
 6. **After download**, record in sync-state row entry:
    ```json
    "images": [
-     {"index": 1, "file": "llm_wiki/images/<part>/<slug>/01-a1b2c3d4.png",
+     {"index": 1, "file": "docs/llm_wiki/images/<part>/<slug>/01-a1b2c3d4.png",
       "origin_host": "prod-files-secure.s3..."}
    ]
    ```
@@ -178,7 +178,7 @@ For new candidates (no prior file), summary = `"new: <title>"`.
 
 ### Phase 5 — Determine impacted llm_wiki files
 
-Use Grep on `llm_wiki/**/*.md` for `source: notion:<row-id>` markers.
+Use Grep on `docs/llm_wiki/**/*.md` for `source: notion:<row-id>` markers.
 
 - Matches → add to `impacted[]`.
 - No match → flag as **unclaimed**; a new wiki page will be created in
@@ -197,11 +197,11 @@ concurrent). Each sub-agent:
   3. Never touch `<!-- source: manual -->` or
      `<!-- source: code:* -->` blocks.
   4. For unclaimed rows, place new pages under:
-     - `llm_wiki/entities/` if tags include character/location/entity-ish.
-     - `llm_wiki/concepts/` if tags include system/mechanic.
-     - `llm_wiki/narrative/` if tags include story/lore/timeline.
-     - `llm_wiki/tech/` if tags include code/arch/test or part = development.
-     - Otherwise default to `llm_wiki/misc/`.
+     - `docs/llm_wiki/entities/` if tags include character/location/entity-ish.
+     - `docs/llm_wiki/concepts/` if tags include system/mechanic.
+     - `docs/llm_wiki/narrative/` if tags include story/lore/timeline.
+     - `docs/llm_wiki/tech/` if tags include code/arch/test or part = development.
+     - Otherwise default to `docs/llm_wiki/misc/`.
   5. Fill frontmatter fields (`refs[]` from inline `[[wiki-id]]` or
      markdown links to other wiki files).
 
@@ -210,9 +210,9 @@ the filesystem.
 
 ### Phase 7 — Update index.md and log.md
 
-1. Rebuild `llm_wiki/index.md` per category by globbing and reading
+1. Rebuild `docs/llm_wiki/index.md` per category by globbing and reading
    H1 + summary line of each file.
-2. Append one entry to `llm_wiki/log.md`:
+2. Append one entry to `docs/llm_wiki/log.md`:
    ```
    ## [YYYY-MM-DD HH:MM] ingest | N rows, M wiki files refined
    - parts: <list>
@@ -225,12 +225,12 @@ the filesystem.
 
 ### Phase 8 — Persist state
 
-Write to `raw/_meta/sync-state.json`:
+Write to `docs/raw/_meta/sync-state.json`:
 - `last_main_seen[part]` = the **newest** `last_edited_time` among
   successfully ingested rows in this run (not the cursor of rows
   filtered out).
 - `rows[row_id]` = `{"hash": "<sha256>", "notion_last_edited": "<iso>",
-  "path": "raw/<part>/main/<slug>.md"}`.
+  "path": "docs/raw/<part>/main/<slug>.md"}`.
 - `last_sync` = now.
 
 Atomic write: `.json.tmp` then rename.
@@ -240,7 +240,7 @@ Atomic write: `.json.tmp` then rename.
 1. No creative rewriting. Structural reorganization + summarization.
 2. Preserve all `<!-- source: manual -->` and `<!-- source: code:* -->`
    blocks verbatim.
-3. Produce frontmatter compatible with `llm_wiki/index.md`
+3. Produce frontmatter compatible with `docs/llm_wiki/index.md`
    rebuilding.
 4. Cross-reference when multiple raw files map to the same concept.
 
@@ -248,7 +248,7 @@ Atomic write: `.json.tmp` then rename.
 
 - Do NOT query a log DB — it does not exist in this version.
 - Do NOT mutate Notion from this skill.
-- Do NOT write under `raw/<part>/notes/` unless `--include-notes` is
+- Do NOT write under `docs/raw/<part>/notes/` unless `--include-notes` is
   passed (then treat as additional candidates but do not refine by
   default).
 - Do NOT update `last_main_seen` before Phase 6 succeeds for the

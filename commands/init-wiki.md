@@ -1,11 +1,11 @@
 ---
-description: Seed the llm-wiki three-tier workspace (raw/, llm_wiki/, _meta) in the current project. Idempotent.
+description: Seed the llm-wiki three-tier workspace (docs/raw/, docs/llm_wiki/, _meta) in the current project. Idempotent.
 argument-hint: (no arguments)
 ---
 
 # /init-wiki
 
-Seed the llm-wiki workspace. Creates `raw/`, `llm_wiki/`, their `_meta/`
+Seed the llm-wiki workspace. Creates `docs/raw/`, `docs/llm_wiki/`, their `_meta/`
 subdirectories, and empty skeleton JSONs. Safe to re-run — existing
 files are preserved.
 

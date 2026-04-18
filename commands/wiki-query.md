@@ -1,11 +1,11 @@
 ---
-description: Answer a question from llm_wiki with citations. Optionally file the answer into llm_wiki/explorations/.
+description: Answer a question from llm_wiki with citations. Optionally file the answer into docs/llm_wiki/explorations/.
 argument-hint: <question> [--file|--no-file] [--max-pages N]
 ---
 
 # /wiki-query
 
-Question answering grounded strictly in `llm_wiki/`. Not a general
+Question answering grounded strictly in `docs/llm_wiki/`. Not a general
 knowledge answerer — if the wiki is silent, the skill says so.
 
 Invoke the `wiki-query` skill:

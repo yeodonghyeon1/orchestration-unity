@@ -1,6 +1,6 @@
 ---
 name: notion-push
-description: Use when the user invokes /notion-push or asks to publish llm_wiki/ changes back to the Notion 메인 DB rows they came from. Reverse sync — develop_docs → Notion. Preserves user-authored (source:manual) blocks. Requires the user to approve a dry-run plan before any write.
+description: Use when the user invokes /notion-push or asks to publish docs/llm_wiki/ changes back to the Notion 메인 DB rows they came from. Reverse sync — develop_docs → Notion. Preserves user-authored (source:manual) blocks. Requires the user to approve a dry-run plan before any write.
 ---
 
 # notion-push
@@ -18,10 +18,10 @@ it. Target is always a row in a part's 메인 DB, never an arbitrary page.
 
 ## Pre-flight
 
-1. `raw/_meta/sync-state.json`, `raw/_meta/db-map.json` present with
+1. `docs/raw/_meta/sync-state.json`, `docs/raw/_meta/db-map.json` present with
    `root_page_id` set. Abort otherwise.
 2. Notion MCP tools available.
-3. `raw/` has no uncommitted local edits (raw is sync-owned). Abort if
+3. `docs/raw/` has no uncommitted local edits (raw is sync-owned). Abort if
    dirty.
 4. Every candidate wiki file has either a `<!-- source: notion:<row-id> -->`
    block or frontmatter `source_notion_rows: [<id>, ...]`. Files with
@@ -31,10 +31,10 @@ it. Target is always a row in a part's 메인 DB, never an arbitrary page.
 
 ### Phase 1 — Collect candidates
 
-1. Default: `git diff --name-only <last_push_commit>..HEAD -- llm_wiki/`.
+1. Default: `git diff --name-only <last_push_commit>..HEAD -- docs/llm_wiki/`.
    If `last_push_commit` is null (first push), use `HEAD~5..HEAD` and
    warn.
-2. `--all` uses every `llm_wiki/**/*.md` that has a notion source marker.
+2. `--all` uses every `docs/llm_wiki/**/*.md` that has a notion source marker.
 3. `--files <path>...` uses the explicit list.
 
 ### Phase 2 — Map each section to a target row
@@ -109,7 +109,7 @@ If any row fails, continue with the rest but remember the failure list.
 
 ### Phase 6 — Record and report
 
-1. Write `raw/_meta/sync-state.json` atomically with:
+1. Write `docs/raw/_meta/sync-state.json` atomically with:
    - Updated rows.
    - `last_push_commit = <current HEAD>`.
    - `last_push = now`.
@@ -140,7 +140,7 @@ Always list orphans in the dry-run plan regardless of flag.
 - Do NOT push without the user approving the dry-run.
 - Do NOT overwrite `source: manual` blocks.
 - Do NOT delete Notion pages or rows.
-- Do NOT modify `raw/**` — that's `/wiki-ingest`'s territory.
+- Do NOT modify `docs/raw/**` — that's `/wiki-ingest`'s territory.
 - Do NOT run `/wiki-ingest` from within this skill.
 
 ## Arguments

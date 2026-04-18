@@ -1,5 +1,5 @@
 ---
-description: Pull Notion 📘 메인 rows whose last_edited_time exceeds the per-part cursor; refine affected llm_wiki pages; download embedded images to llm_wiki/images/ (LFS).
+description: Pull Notion 📘 메인 rows whose last_edited_time exceeds the per-part cursor; refine affected llm_wiki pages; download embedded images to docs/llm_wiki/images/ (LFS).
 argument-hint: [--part <key>] [--include-drafts|--only-fixed] [--include-notes] [--no-images] [--include-videos] [--dry-run] [--limit N]
 ---
 
@@ -22,16 +22,16 @@ The skill will:
 3. Filter by `상태` (default: `{review, fixed}`).
 4. Fetch each surviving row.
 5. **Download embedded images** from the row body to
-   `llm_wiki/images/<part>/<slug>/` (git LFS). Notion signed URLs expire
+   `docs/llm_wiki/images/<part>/<slug>/` (git LFS). Notion signed URLs expire
    in ~1h, so localization is mandatory for permanence. Links in the
    body are rewritten to relative local paths. Opt-out: `--no-images`.
-6. Mirror each row to `raw/<part>/main/*.md` with frontmatter.
+6. Mirror each row to `docs/raw/<part>/main/*.md` with frontmatter.
 7. Diff old vs new body → log summary.
-8. Compute impacted `llm_wiki/**` pages via
+8. Compute impacted `docs/llm_wiki/**` pages via
    `<!-- source: notion:<row-id> -->` markers.
 9. Dispatch refinement sub-agents; main Claude applies outputs via
    Edit/Write.
-10. Update `llm_wiki/index.md` and `log.md`.
+10. Update `docs/llm_wiki/index.md` and `log.md`.
 11. Persist `sync-state` (new `last_main_seen` + row hashes + images).
 
 ## Arguments

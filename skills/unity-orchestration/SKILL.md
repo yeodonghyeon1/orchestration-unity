@@ -1,21 +1,21 @@
 ---
 name: unity-orchestration
-description: Use when user invokes /unity-orchestration <task> or asks to develop a Unity game feature. Orchestrates the full Superpowers chain (brainstorming → writing-plans → executing-plans → TDD → verification → finishing-branch) using llm_wiki/ as the authoritative context source, and unity-mcp as the implementation layer. Triggers /wiki-sync-code after verification.
+description: Use when user invokes /unity-orchestration <task> or asks to develop a Unity game feature. Orchestrates the full Superpowers chain (brainstorming → writing-plans → executing-plans → TDD → verification → finishing-branch) using docs/llm_wiki/ as the authoritative context source, and unity-mcp as the implementation layer. Triggers /wiki-sync-code after verification.
 ---
 
 # unity-orchestration
 
 Drive a Unity game-development task through the Superpowers discipline
-chain. Reads context from `llm_wiki/` (LLM-maintained wiki), produces a
-plan under `llm_wiki/plans/`, executes via TDD + unity-mcp,
-updates `llm_wiki/tech/**` via `/wiki-sync-code`, and hands off via
+chain. Reads context from `docs/llm_wiki/` (LLM-maintained wiki), produces a
+plan under `docs/superpowers/plans/`, executes via TDD + unity-mcp,
+updates `docs/llm_wiki/tech/**` via `/wiki-sync-code`, and hands off via
 `superpowers:finishing-a-development-branch`.
 
 **Announce at start:** "I'm using the unity-orchestration skill to drive this task through Superpowers."
 
 ## Pre-flight
 
-1. `llm_wiki/index.md` and `llm_wiki/log.md` exist (run `/init-wiki`
+1. `docs/llm_wiki/index.md` and `docs/llm_wiki/log.md` exist (run `/init-wiki`
    and at least one `/wiki-ingest` first). Warn if empty.
 2. `unity-mcp` MCP tools available (`mcp__unity-mcp__*` or equivalent).
    If absent, warn — brainstorming and planning can still proceed but
@@ -32,14 +32,14 @@ See `workflow.md` for details. Summary:
 ```
 1.  superpowers:brainstorming         — clarify requirements with user
 2.  Load relevant llm_wiki context    — index.md + recent log.md + linked pages
-3.  superpowers:writing-plans         — produce llm_wiki/plans/YYYY-MM-DD-<slug>.md
+3.  superpowers:writing-plans         — produce docs/superpowers/plans/YYYY-MM-DD-<slug>.md
 4.  [User approval gate]              — plan must be approved before implementation
 5.  superpowers:using-git-worktrees   — optional (recommended for big tasks)
 6.  superpowers:executing-plans OR superpowers:subagent-driven-development
 7.   └─ superpowers:test-driven-development  (per task)
 8.   └─ unity-mcp calls                      (scene / prefab / C# edits)
 9.  superpowers:verification-before-completion
-10. /wiki-sync-code                   — update llm_wiki/tech/** from modified C# files
+10. /wiki-sync-code                   — update docs/llm_wiki/tech/** from modified C# files
 11. superpowers:finishing-a-development-branch
 ```
 
@@ -47,9 +47,9 @@ See `workflow.md` for details. Summary:
 
 Given `<task>` argument:
 
-1. Read `llm_wiki/index.md` in full. Extract `(category, id, title,
+1. Read `docs/llm_wiki/index.md` in full. Extract `(category, id, title,
    summary)` per page.
-2. Read the last 20 lines of `llm_wiki/log.md` to see recent activity.
+2. Read the last 20 lines of `docs/llm_wiki/log.md` to see recent activity.
 3. Tokenize the task description, extract keywords. Match against the
    index titles/summaries → `candidate_pages`.
 4. Read each candidate page. Follow cross-links (up to 2 hops, bounded
@@ -71,12 +71,12 @@ Skill('wiki-sync-code')
 It will:
 - Find modified `Assets/**/*.cs` files.
 - Regenerate the `<!-- source: code:<path> -->` blocks in
-  `llm_wiki/tech/**`.
-- Append a `code-sync` entry to `llm_wiki/log.md`.
+  `docs/llm_wiki/tech/**`.
+- Append a `code-sync` entry to `docs/llm_wiki/log.md`.
 - Suggest `/notion-push --dry-run` (main Claude decides whether to run
   it — default: suggest, don't auto-run).
 
-Commit `llm_wiki/` changes on the same feature branch as the code.
+Commit `docs/llm_wiki/` changes on the same feature branch as the code.
 
 ## Art separation (strict)
 
@@ -86,7 +86,7 @@ llm_wiki is a **concept / reference catalog**, not a runtime asset store.
   (concept sketches, color palettes, mood, animation timing references).
 - **Production art assets must live under `Assets/` in the Unity project**
   (sprites, animations, prefabs, VFX). These are tracked by git LFS.
-- Do NOT treat images under `llm_wiki/images/**` as production — they are
+- Do NOT treat images under `docs/llm_wiki/images/**` as production — they are
   downloaded Notion concept images, referenced for discussion only.
 - Do NOT auto-upload `Assets/` binaries to Notion. Notion is the concept
   space; git is the production SSOT for art.
@@ -100,19 +100,19 @@ llm_wiki is a **concept / reference catalog**, not a runtime asset store.
 - Do NOT execute code without a passing failing test first (TDD Iron
   Law).
 - Do NOT mark task complete without `verification-before-completion`.
-- Do NOT touch `raw/` directly — that's sync-owned.
-- Do NOT touch `llm_wiki/*.md` directly except via `/wiki-sync-code`
+- Do NOT touch `docs/raw/` directly — that's sync-owned.
+- Do NOT touch `docs/llm_wiki/*.md` directly except via `/wiki-sync-code`
   (for tech pages) — wiki mutations belong to `/wiki-ingest`.
 - Do NOT bypass the user approval gate at Step 4.
 - Do NOT run `/wiki-sync-code` before verification passes.
-- Do NOT reference `llm_wiki/images/**` images from Unity code or
+- Do NOT reference `docs/llm_wiki/images/**` images from Unity code or
   manifests. Production art paths are under `Assets/Art/**`.
 
 ## Output on completion
 
 ```
 task: <task>
-plan: llm_wiki/plans/YYYY-MM-DD-<slug>.md
+plan: docs/superpowers/plans/YYYY-MM-DD-<slug>.md
 files changed: N code, M test
 wiki updated: [list]  (via /wiki-sync-code)
 verification: passed

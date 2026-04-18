@@ -1,6 +1,6 @@
 ---
 name: wiki-query
-description: Use when the user asks a question about the project that should be answered from the llm_wiki. Reads llm_wiki/index.md first to locate relevant pages, then reads those pages to compose a cited answer. Optionally files the answer back into llm_wiki/explorations/.
+description: Use when the user asks a question about the project that should be answered from the llm_wiki. Reads docs/llm_wiki/index.md first to locate relevant pages, then reads those pages to compose a cited answer. Optionally files the answer back into docs/llm_wiki/explorations/.
 ---
 
 # wiki-query
@@ -12,7 +12,7 @@ question answerer — strictly wiki-grounded.
 
 ## Pre-flight
 
-1. `llm_wiki/index.md` exists. If missing, suggest `/init-wiki` then
+1. `docs/llm_wiki/index.md` exists. If missing, suggest `/init-wiki` then
    `/wiki-ingest`.
 2. The user's question is provided (as argument or implicit prior turn).
 
@@ -20,7 +20,7 @@ question answerer — strictly wiki-grounded.
 
 ### Phase 1 — Index scan
 
-Read `llm_wiki/index.md`. Extract `(category, page-id, title, summary)`
+Read `docs/llm_wiki/index.md`. Extract `(category, page-id, title, summary)`
 tuples. Keep the entries whose title or summary contain at least one
 term from the question. Also pick the top 3 entries per matched
 category even without term overlap (general context).
@@ -39,7 +39,7 @@ them too (bounded: up to 10 additional pages total per query).
 
 Write the answer as **plain text to the user** (not a file yet). Rules:
 - Lead with a one-sentence conclusion.
-- Cite each non-obvious claim with the wiki path: `(llm_wiki/<path>.md)`.
+- Cite each non-obvious claim with the wiki path: `(docs/llm_wiki/<path>.md)`.
 - If the wiki has conflicting claims, surface the conflict rather than
   resolving silently.
 - If the answer requires information not in the wiki, say so explicitly —
@@ -50,7 +50,7 @@ Write the answer as **plain text to the user** (not a file yet). Rules:
 If the user asks to save the answer, or the answer is a non-trivial
 synthesis worth keeping:
 1. Ask the user to confirm filing.
-2. Create `llm_wiki/explorations/<YYYY-MM-DD>-<slug>.md` with:
+2. Create `docs/llm_wiki/explorations/<YYYY-MM-DD>-<slug>.md` with:
    ```yaml
    ---
    id: explorations.<date>-<slug>
@@ -61,7 +61,7 @@ synthesis worth keeping:
    ---
    ```
    followed by the answer body.
-3. Append an entry to `llm_wiki/log.md`.
+3. Append an entry to `docs/llm_wiki/log.md`.
 
 ## Forbidden
 

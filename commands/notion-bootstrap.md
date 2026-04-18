@@ -20,7 +20,7 @@ The skill will:
 3. Per part: create 📘 메인 DB and 💡 자료&아이디어 DB (6 DBs total).
 4. Overwrite the main page body with a v2 structure doc (best-effort;
    skips if MCP validation blocks).
-5. Persist `raw/_meta/db-map.json` (schema v2) and seed
+5. Persist `docs/raw/_meta/db-map.json` (schema v2) and seed
    `sync-state.json` (schema v3) with `last_main_seen[part] = null`.
 
 **No log DB.** Change detection in `/wiki-ingest` uses

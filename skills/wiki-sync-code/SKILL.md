@@ -1,23 +1,23 @@
 ---
 name: wiki-sync-code
-description: Use when the user invokes /wiki-sync-code or asks to update the wiki with recent code changes. Scans git-modified C# files (or a user-specified glob), extracts signatures and doc comments, and regenerates the `<!-- source: code:<path> -->` sections in llm_wiki/tech/**. Does NOT push to Notion — proposes /notion-push afterwards.
+description: Use when the user invokes /wiki-sync-code or asks to update the wiki with recent code changes. Scans git-modified C# files (or a user-specified glob), extracts signatures and doc comments, and regenerates the `<!-- source: code:<path> -->` sections in docs/llm_wiki/tech/**. Does NOT push to Notion — proposes /notion-push afterwards.
 ---
 
 # wiki-sync-code
 
-Keep llm_wiki/tech/** in sync with the Unity C# source tree. Triggered
+Keep docs/llm_wiki/tech/** in sync with the Unity C# source tree. Triggered
 manually or suggested by the file-edit hook after an `Assets/**/*.cs` edit.
 
-**Announce at start:** "I'm using the wiki-sync-code skill to sync code changes into llm_wiki/tech/."
+**Announce at start:** "I'm using the wiki-sync-code skill to sync code changes into docs/llm_wiki/tech/."
 
 ## Pre-flight
 
-1. Current directory is the project root. `llm_wiki/tech/` exists
+1. Current directory is the project root. `docs/llm_wiki/tech/` exists
    (created by `/init-wiki`).
 2. At least one of:
    - `git status` shows modified `Assets/**/*.cs`, OR
    - User passed `--files <path>...` or `--glob <pattern>`.
-3. `llm_wiki/_meta/wiki-state.json` exists.
+3. `docs/llm_wiki/_meta/wiki-state.json` exists.
 
 ## Algorithm
 
@@ -46,12 +46,12 @@ Do **not** include method bodies. Signatures + docstrings only.
 
 ### Phase 3 — Locate the wiki page for each file
 
-For each C# file path, look for `llm_wiki/tech/**/*.md` containing a
+For each C# file path, look for `docs/llm_wiki/tech/**/*.md` containing a
 marker exactly `<!-- source: code:<path> -->` where `<path>` is the
 repo-relative file path (forward slashes).
 
 - **Match found** → plan to update that block only.
-- **No match** → plan to create `llm_wiki/tech/auto/<slug>.md` where
+- **No match** → plan to create `docs/llm_wiki/tech/auto/<slug>.md` where
   `<slug>` = relative path with `/` replaced by `_` and `.cs` stripped.
 
 ### Phase 4 — Generate section content
@@ -106,7 +106,7 @@ declaration order within each type. This keeps diffs readable.
 
 ### Phase 6 — Append to log.md
 
-Write one entry to `llm_wiki/log.md`:
+Write one entry to `docs/llm_wiki/log.md`:
 ```
 ## [YYYY-MM-DD HH:MM] code-sync | <N> files
 - <path> → <wiki-file>
@@ -115,8 +115,8 @@ Write one entry to `llm_wiki/log.md`:
 
 ### Phase 7 — Refresh index.md Tech section
 
-Rebuild only the `## Tech` section of `llm_wiki/index.md` from the
-current set of `llm_wiki/tech/**/*.md` titles.
+Rebuild only the `## Tech` section of `docs/llm_wiki/index.md` from the
+current set of `docs/llm_wiki/tech/**/*.md` titles.
 
 ### Phase 8 — Propose /notion-push
 
