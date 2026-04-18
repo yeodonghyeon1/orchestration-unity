@@ -78,6 +78,65 @@ For each surviving candidate:
 5. Compute sha256 of the normalized body; stage for
    `sync-state.rows[row_id]`.
 
+### Phase 3.5 — Download embedded images (before writing body)
+
+Notion image URLs are signed S3 links (`prod-files-secure.s3...`) that
+expire in ~1 hour. To preserve them permanently, localize each image
+into `llm_wiki/images/<part>/<slug>/` (tracked by git LFS via the
+project's `.gitattributes`). Run this before writing the raw file in
+step 4 above so links inside `raw/<part>/main/<slug>.md` are already
+local paths.
+
+Skip entirely if `--no-images` is passed.
+
+1. **Extract URLs** from the fetched body markdown:
+   - `![alt](https?://...)` — standard markdown image
+   - `<img src="https?://...">` — inline HTML
+   - `<video src="https?://...">` and `[video](https?://...)` — optional,
+     gated by `--include-videos` (default: skip videos)
+   Preserve discovery order → `urls[]` with 1-based indexes.
+
+2. **Pick target directory**:
+   `llm_wiki/images/<part>/<slug>/` — mkdir -p if missing.
+
+3. **For each URL** (`idx`, `url`):
+   a. Determine extension: parse URL path for `.png|.jpg|.jpeg|.gif|.webp|.mp4|.mov|.webm`.
+      If extension is missing or ambiguous, fall back to `.png`.
+   b. Compute filename: `<zero-padded-idx>-<short-hash>.<ext>`
+      where `<short-hash>` = first 8 hex chars of sha256(url).
+      Example: `03-a1b2c3d4.png`.
+   c. Download:
+      ```
+      curl -sSL --max-time 30 --retry 1 -o \
+        "llm_wiki/images/<part>/<slug>/<filename>" "<url>"
+      ```
+   d. **On failure** (HTTP 4xx/5xx, timeout):
+      - Log warning with URL snippet.
+      - Keep original URL in body (will be broken but traceable).
+      - Append `{url, reason}` to `download_failures[]` for final report.
+
+4. **Rewrite URLs** in the body text:
+   - `raw/<part>/main/<slug>.md` sees the image at
+     `../../llm_wiki/images/<part>/<slug>/<filename>`
+     (3 levels up from `raw/<part>/main/` to project root, then into llm_wiki).
+   - When sub-agents later refine into `llm_wiki/<category>/*.md`, they
+     compute their own relative path (`../images/<part>/<slug>/<filename>`).
+   - Preserve the original `alt` text verbatim.
+
+5. **Skip cases**:
+   - URL already starts with `../llm_wiki/images/` or `llm_wiki/images/`
+     (already localized) — no-op.
+   - `data:image/...;base64,...` inline — no-op (not a remote URL).
+   - File size > 50MB after download — warn but keep the file.
+
+6. **After download**, record in sync-state row entry:
+   ```json
+   "images": [
+     {"index": 1, "file": "llm_wiki/images/<part>/<slug>/01-a1b2c3d4.png",
+      "origin_host": "prod-files-secure.s3..."}
+   ]
+   ```
+
 ### Phase 4 — Compute diff against prior sync
 
 For each candidate that already existed on disk before this run:
@@ -176,6 +235,9 @@ Atomic write: `.json.tmp` then rename.
 - `--only-fixed` — only rows with `상태: fixed`.
 - `--include-notes` — also ingest 자료&아이디어 DB (uses the same
   last_edited_time algorithm against `last_notes_seen`).
+- `--no-images` — skip Phase 3.5 image download; keep remote URLs.
+- `--include-videos` — also download video blocks (off by default; can
+  be very large).
 - `--dry-run` — stop after Phase 5; emit the plan without writing.
 - `--limit N` — per-part pagination cap (default 10 pages).
 

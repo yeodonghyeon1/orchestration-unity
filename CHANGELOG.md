@@ -4,6 +4,25 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [2.2.0] — 2026-04-19
+
+### Added
+- `wiki-ingest` Phase 3.5 — download embedded images from Notion row
+  bodies to `llm_wiki/images/<part>/<slug>/` and rewrite markdown links
+  to relative local paths. Notion signed S3 URLs expire in ~1 hour; this
+  localization is mandatory for permanence.
+- `wiki-ingest` args: `--no-images` (skip download), `--include-videos`
+  (also fetch `<video>` / `[video]` blocks; default off).
+- `unity-orchestration` SKILL 'Art separation' section — llm_wiki is a
+  concept/reference catalog; production art lives in `Assets/**`
+  (git LFS). Forbidden list extended.
+
+### Notes
+- Consumers should add `llm_wiki/images/**` to their `.gitattributes`
+  under LFS tracking. Example patterns ship in the LUMINIS project's
+  `.gitattributes` (png, jpg, gif, webp, mp4, psd, aseprite, blend,
+  fbx, wav, anim, controller).
+
 ## [2.1.0] — 2026-04-19
 
 ### Changed
