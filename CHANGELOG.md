@@ -30,8 +30,16 @@ Progressing toward v1.0.0 — a Notion-driven Superpowers pipeline. See
 - Added `commands/docs-update.md` — `/docs-update` meta command (chains sync → refine → branch commit → push)
 - Added fixture `tests/fixture/develop-docs-sample/` and integration test `tests/integration/test-docs-refinement.sh`
 
+### Slice C (Living Knowledge Base) — complete in 1.0.0-alpha.3
+- Added `scripts/provenance.py` — HTML comment provenance marker parser/writer (sources/extract/replace/append/strip)
+- Added `scripts/code-to-docs.py` — C# public surface extractor (classes, methods, properties, serialized fields); both markdown and YAML frontmatter modes
+- Added fixtures: `tests/fixture/csharp-samples/{CombatSystem,DamageFormula}.cs` and `tests/fixture/provenance-sample.md`
+- Updated `skills/docs-refinement/SKILL.md` with Section Preservation chapter — defines the notion/code/manual source tags and the preserve-non-notion-sections contract
+- Updated `skills/docs-refinement/cross-ref-rules.md` with provenance markers appendix
+- Updated `skills/docs-refinement/templates/develop-doc-frontmatter.md` with `section_sources` and `code_references` fields
+- Added preservation integration test demonstrating that `/docs-refinement` regenerates only `notion:*` sections while preserving `code:*` and `manual` sections
+
 ### Planned (upcoming slices)
-- Slice C: Section 17 living knowledge base (provenance markers, code → docs updates)
 - Slice D: `/unity-orchestration` Superpowers chain rewrite (removes 10-agent consensus)
 - Slice E: v0.2 → v1.0 migration, README replacement, 1.0.0 release tag
 
