@@ -78,6 +78,22 @@ It will:
 
 Commit `llm_wiki/` changes on the same feature branch as the code.
 
+## Art separation (strict)
+
+llm_wiki is a **concept / reference catalog**, not a runtime asset store.
+
+- When a task needs art, **read llm_wiki for intent and style direction**
+  (concept sketches, color palettes, mood, animation timing references).
+- **Production art assets must live under `Assets/` in the Unity project**
+  (sprites, animations, prefabs, VFX). These are tracked by git LFS.
+- Do NOT treat images under `llm_wiki/assets/**` as production — they are
+  downloaded Notion concept images, referenced for discussion only.
+- Do NOT auto-upload `Assets/` binaries to Notion. Notion is the concept
+  space; git is the production SSOT for art.
+- If production art is missing for a task, **request it from the artist**
+  (create a Notion 💡 자료&아이디어 row or request Assets commit). Do NOT
+  improvise binary assets.
+
 ## Forbidden
 
 - Do NOT skip brainstorming, even for small tasks (HARD-GATE).
@@ -89,6 +105,8 @@ Commit `llm_wiki/` changes on the same feature branch as the code.
   (for tech pages) — wiki mutations belong to `/wiki-ingest`.
 - Do NOT bypass the user approval gate at Step 4.
 - Do NOT run `/wiki-sync-code` before verification passes.
+- Do NOT reference `llm_wiki/assets/**` images from Unity code or
+  manifests. Production art paths are under `Assets/Art/**`.
 
 ## Output on completion
 
