@@ -26,6 +26,10 @@ itself → orphan.
 Files under `llm_wiki/<category>/*.md` that are **not** listed in
 `llm_wiki/index.md`. Suggest index refresh.
 
+Scan these categories (whichever exist in the project):
+`entities/`, `concepts/`, `narrative/`, `tech/`, `plans/`, `specs/`,
+`explorations/`. `images/` is asset storage — do NOT index it.
+
 ### 3. Stale drafts
 Raw main rows with `status: draft` whose `notion_last_edited` is older
 than 14 days. List with row title and days-since-edit.

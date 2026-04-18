@@ -4,6 +4,32 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [2.3.0] — 2026-04-19
+
+### Changed
+- **Unified all LLM-facing markdown under `llm_wiki/`.** Removed the
+  separate `docs/superpowers/` tree. Paths migrated:
+  - `docs/superpowers/plans/` → `llm_wiki/plans/`
+  - `docs/superpowers/specs/` → `llm_wiki/specs/`
+- `init-wiki` now seeds `llm_wiki/{plans,specs,explorations,images}/`
+  (each with a `.gitkeep`).
+- `llm_wiki/index.md` template now includes `## Plans`, `## Specs`,
+  `## Explorations` sections so `/wiki-query` and `/unity-orchestration`
+  context loading naturally pick them up.
+- `unity-orchestration` SKILL + workflow updated: `writing-plans` writes
+  to `llm_wiki/plans/YYYY-MM-DD-<slug>.md`, `brainstorming` writes spec
+  to `llm_wiki/specs/YYYY-MM-DD-<topic>-design.md`.
+- `wiki-lint` scans the new categories; `images/` remains asset-only.
+
+### Rationale
+- Previous split (`docs/` for plans/specs, `llm_wiki/` for knowledge)
+  forced the LLM to search two roots with different conventions. A
+  single tree under `llm_wiki/` simplifies discovery, index
+  maintenance, and `/unity-orchestration` context loading.
+- Consumer projects should remove or migrate their existing
+  `docs/superpowers/` trees. Archive v1 `docs/` content if desired; the
+  plugin no longer references it.
+
 ## [2.2.2] — 2026-04-19
 
 ### Fixed

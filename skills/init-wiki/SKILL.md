@@ -31,7 +31,16 @@ mkdir -p \
   "$root/llm_wiki/entities" \
   "$root/llm_wiki/concepts" \
   "$root/llm_wiki/narrative" \
-  "$root/llm_wiki/tech"
+  "$root/llm_wiki/tech" \
+  "$root/llm_wiki/plans" \
+  "$root/llm_wiki/specs" \
+  "$root/llm_wiki/explorations" \
+  "$root/llm_wiki/images"
+
+# .gitkeep for empty dirs so git preserves them
+for d in plans specs explorations images; do
+  [ -f "$root/llm_wiki/$d/.gitkeep" ] || touch "$root/llm_wiki/$d/.gitkeep"
+done
 
 # sync-state.json — per-part log cursor + row hash table
 if [ ! -f "$root/raw/_meta/sync-state.json" ]; then
@@ -101,6 +110,18 @@ _(empty)_
 ## Tech
 
 _(empty)_
+
+## Plans
+
+_(empty — written by `/unity-orchestration` via superpowers:writing-plans)_
+
+## Specs
+
+_(empty — written by superpowers:brainstorming)_
+
+## Explorations
+
+_(empty — written by `/wiki-query` when filing an answer)_
 MD
 
 [ -f "$root/llm_wiki/log.md" ] || cat > "$root/llm_wiki/log.md" <<'MD'

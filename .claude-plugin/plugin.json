@@ -1,7 +1,7 @@
 {
   "name": "unity-orchestration",
   "description": "llm-wiki pattern for Unity: Notion (raw) × llm_wiki (LLM-maintained) × CLAUDE.md (schema). last_edited_time change detection, parts × DB matrix, Superpowers TDD chain, unity-mcp implementation. Scriptless plugin — all logic in SKILL.md.",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "author": {
     "name": "yeodonghyeon1",
     "email": "ydh744@naver.com"

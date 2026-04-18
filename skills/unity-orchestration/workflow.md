@@ -27,7 +27,7 @@ rows and `/wiki-ingest` keeps the wiki current.
 Invoke `superpowers:brainstorming`. Let it run its full HARD-GATE flow —
 context exploration, clarifying questions (one at a time), 2-3
 alternative approaches, design sections with user approval, final spec
-at `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`.
+at `llm_wiki/specs/YYYY-MM-DD-<topic>-design.md`.
 
 On spec approval, brainstorming hands off to step 3 (writing-plans).
 
@@ -48,7 +48,7 @@ layer is only touched indirectly via `/wiki-ingest`.
 ## Step 3 — Writing plans
 
 `superpowers:writing-plans` produces
-`docs/superpowers/plans/YYYY-MM-DD-<slug>.md` with bite-sized tasks
+`llm_wiki/plans/YYYY-MM-DD-<slug>.md` with bite-sized tasks
 (2-5 min each), TDD steps, and exact file paths. Plan references the
 wiki pages loaded in Step 2.
 

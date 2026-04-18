@@ -7,7 +7,7 @@ description: Use when user invokes /unity-orchestration <task> or asks to develo
 
 Drive a Unity game-development task through the Superpowers discipline
 chain. Reads context from `llm_wiki/` (LLM-maintained wiki), produces a
-plan under `docs/superpowers/plans/`, executes via TDD + unity-mcp,
+plan under `llm_wiki/plans/`, executes via TDD + unity-mcp,
 updates `llm_wiki/tech/**` via `/wiki-sync-code`, and hands off via
 `superpowers:finishing-a-development-branch`.
 
@@ -32,7 +32,7 @@ See `workflow.md` for details. Summary:
 ```
 1.  superpowers:brainstorming         — clarify requirements with user
 2.  Load relevant llm_wiki context    — index.md + recent log.md + linked pages
-3.  superpowers:writing-plans         — produce docs/superpowers/plans/YYYY-MM-DD-<slug>.md
+3.  superpowers:writing-plans         — produce llm_wiki/plans/YYYY-MM-DD-<slug>.md
 4.  [User approval gate]              — plan must be approved before implementation
 5.  superpowers:using-git-worktrees   — optional (recommended for big tasks)
 6.  superpowers:executing-plans OR superpowers:subagent-driven-development
@@ -112,7 +112,7 @@ llm_wiki is a **concept / reference catalog**, not a runtime asset store.
 
 ```
 task: <task>
-plan: docs/superpowers/plans/YYYY-MM-DD-<slug>.md
+plan: llm_wiki/plans/YYYY-MM-DD-<slug>.md
 files changed: N code, M test
 wiki updated: [list]  (via /wiki-sync-code)
 verification: passed
