@@ -1,12 +1,11 @@
 ---
-id: plugin-docs.architecture-v1
-title: Architecture Overview (v1.0)
+id: plugin-docs.architecture
+title: Architecture Overview
 owner: developer
-status: draft
+status: stable
 updated: 2026-04-18
-version: 1.0.0-draft
+version: 1.0.0
 tags: [architecture, v1]
-supersedes: architecture.md
 ---
 
 # Architecture Overview (v1.0)

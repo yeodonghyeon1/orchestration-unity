@@ -105,9 +105,11 @@ for f in \
   skills/unity-orchestration/templates/docs-tree/game/README.md \
   skills/unity-orchestration/templates/docs-tree/design/README.md \
   skills/unity-orchestration/templates/docs-tree/tech/README.md \
-  docs/getting-started.md \
   docs/architecture.md \
-  docs/troubleshooting.md; do
+  docs/notion-schema-guide.md \
+  docs/archive/v0.2/architecture.md \
+  docs/archive/v0.2/getting-started.md \
+  docs/archive/v0.2/troubleshooting.md; do
   check_frontmatter "$f"
 done
 
@@ -129,7 +131,8 @@ for f in \
   scripts/update-docs-index.py \
   scripts/migrate-v02-to-v1.sh \
   tests/scripts/init-workspace.test.sh \
-  tests/scripts/update-docs-index.test.sh; do
+  tests/scripts/update-docs-index.test.sh \
+  docs/archive/v0.2/README.md; do
   check_file "$f"
 done
 

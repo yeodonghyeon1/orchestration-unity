@@ -1,10 +1,10 @@
 ---
-id: plugin-docs.notion-schema-guide-v1
-title: Notion Schema Guide (v1.0)
+id: plugin-docs.notion-schema-guide
+title: Notion Schema Guide
 owner: user-content
-status: draft
+status: stable
 updated: 2026-04-18
-version: 1.0.0-draft
+version: 1.0.0
 tags: [guide, notion, content-authoring]
 ---
 
