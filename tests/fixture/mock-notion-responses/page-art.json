@@ -1,0 +1,10 @@
+{
+  "object": "page",
+  "id": "uuid-art",
+  "last_edited_time": "2026-04-18T09:05:00Z",
+  "properties": {"title": {"title": [{"plain_text": "아트"}]}},
+  "blocks": [
+    {"type": "heading_2", "heading_2": {"rich_text": [{"plain_text": "Concept Direction"}]}},
+    {"type": "paragraph", "paragraph": {"rich_text": [{"plain_text": "Low-poly, warm palette."}]}}
+  ]
+}

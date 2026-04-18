@@ -4,7 +4,40 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [1.0.0] — 2026-04-18
+
+### BREAKING
+- Complete redesign: 10-agent consensus team replaced with Notion-driven Superpowers pipeline.
+- `/unity-orchestration` arguments, skill names, and workflow semantics have all changed. Existing v0.2.0 users should run `bash scripts/migrate-v02-to-v1.sh`.
+- Removed: `skills/unity-orchestration/agents/*.md`, `voting.md`, `consultation-table.md`, `scripts/tally-votes.sh`, `agents/unity-orchestrator.md`.
+
+### Added
+- Two-tier docs: `notion_docs/` (raw Notion mirror) + `develop_docs/` (refined, cross-referenced).
+- `/notion-sync`, `/docs-refinement`, `/docs-update` slash commands.
+- `scripts/notion-hash.py` — deterministic SHA256 of Notion content.
+- `scripts/page-map.py` — Notion page → folder mapping.
+- `scripts/sync-state.py` — `_meta/sync-state.json` management.
+- `scripts/docs-index.py` — `_meta/index.json` with tree + reverse_index (fixes v0.2 `_self` bug).
+- `scripts/bfs-impact.py` — reverse-index BFS traversal.
+- `scripts/provenance.py` — HTML-comment section-level source markers.
+- `scripts/code-to-docs.py` — C# public surface → markdown.
+- `scripts/code-doc-updater.sh` — post-implementation develop_docs updater.
+- `scripts/migrate-v02-to-v1.sh` — migrate existing v0.2.0 projects.
+- `skills/notion-sync/` — 4-step change detection.
+- `skills/docs-refinement/` — BFS-based incremental refinement.
+- Rewritten `skills/unity-orchestration/` — 11-step Superpowers chain orchestrator.
+- Section-level provenance (`notion:*` / `code:*` / `manual`) for Living Knowledge Base.
+- Integration tests: notion-sync, docs-refinement, preservation, unity-orchestration flow, migration.
+- Docs: `architecture.md` (v1 promoted), `notion-schema-guide.md`, full spec at `docs/superpowers/specs/2026-04-18-orchestration-unity-v1-design.md`.
+
+### Changed
+- `scripts/update-docs-index.py` → forwarding shim to `docs-index.py`.
+- `scripts/init-workspace.sh` now seeds `notion_docs/` and `develop_docs/` dual trees.
+- v0.2.0 docs archived under `docs/archive/v0.2/`.
+
+### Preserved
+- `.orchestration/sessions/` content from v0.2.0 sessions (unused in v1.0 but not deleted).
+- `docs/superpowers/specs/2026-04-11-unity-orchestration-design.md` (v0.2.0 design spec).
 
 ## [0.2.0] — 2026-04-13
 

@@ -1,0 +1,10 @@
+{
+  "object": "page",
+  "id": "uuid-plan",
+  "last_edited_time": "2026-04-18T09:10:00Z",
+  "properties": {"title": {"title": [{"plain_text": "기획"}]}},
+  "blocks": [
+    {"type": "heading_2", "heading_2": {"rich_text": [{"plain_text": "Combat System"}]}},
+    {"type": "paragraph", "paragraph": {"rich_text": [{"plain_text": "Turn-based, 3 action points per turn."}]}}
+  ]
+}

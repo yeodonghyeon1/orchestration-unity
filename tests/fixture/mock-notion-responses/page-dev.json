@@ -1,0 +1,10 @@
+{
+  "object": "page",
+  "id": "uuid-dev",
+  "last_edited_time": "2026-04-18T09:00:00Z",
+  "properties": {"title": {"title": [{"plain_text": "개발"}]}},
+  "blocks": [
+    {"type": "heading_2", "heading_2": {"rich_text": [{"plain_text": "Tech Stack"}]}},
+    {"type": "paragraph", "paragraph": {"rich_text": [{"plain_text": "Unity 2023 LTS, URP, C# 9."}]}}
+  ]
+}

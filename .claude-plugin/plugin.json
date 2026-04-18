@@ -1,7 +1,7 @@
 {
   "name": "unity-orchestration",
-  "description": "10-agent consensus team for Unity game development: plan/accept voting, peer review, playtesting, AI-readable docs tree.",
-  "version": "0.2.0",
+  "description": "Notion-driven Superpowers pipeline for Unity game development: incremental sync, living knowledge base, TDD discipline, unity-mcp implementation.",
+  "version": "1.0.0",
   "author": {
     "name": "yeodonghyeon1",
     "email": "ydh744@naver.com"

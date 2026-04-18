@@ -98,31 +98,27 @@ fi
 # --- Docs-tree-schema files (full 6-field frontmatter) -----------------
 for f in \
   skills/unity-orchestration/workflow.md \
-  skills/unity-orchestration/voting.md \
-  skills/unity-orchestration/consultation-table.md \
   skills/unity-orchestration/docs-tree-spec.md \
-  skills/unity-orchestration/agents/team-lead.md \
-  skills/unity-orchestration/agents/planner.md \
-  skills/unity-orchestration/agents/designer.md \
-  skills/unity-orchestration/agents/developer.md \
-  skills/unity-orchestration/agents/recorder.md \
-  skills/unity-orchestration/agents/tester.md \
   skills/unity-orchestration/templates/docs-tree/README.md \
   skills/unity-orchestration/templates/docs-tree/_meta/glossary.md \
   skills/unity-orchestration/templates/docs-tree/_meta/conventions.md \
   skills/unity-orchestration/templates/docs-tree/game/README.md \
   skills/unity-orchestration/templates/docs-tree/design/README.md \
   skills/unity-orchestration/templates/docs-tree/tech/README.md \
-  docs/getting-started.md \
   docs/architecture.md \
-  docs/troubleshooting.md; do
+  docs/notion-schema-guide.md \
+  docs/archive/v0.2/architecture.md \
+  docs/archive/v0.2/getting-started.md \
+  docs/archive/v0.2/troubleshooting.md; do
   check_frontmatter "$f"
 done
 
 # --- Files that must simply exist ---------------------------------------
 for f in \
   commands/unity-orchestration.md \
-  agents/unity-orchestrator.md \
+  commands/notion-sync.md \
+  commands/docs-refinement.md \
+  commands/docs-update.md \
   skills/unity-orchestration/templates/task-table.template.md \
   skills/unity-orchestration/templates/vote-message.template.json \
   skills/unity-orchestration/templates/adr.template.md \
@@ -131,12 +127,12 @@ for f in \
   skills/unity-orchestration/templates/docs-tree/decisions/.gitkeep \
   skills/unity-orchestration/templates/docs-tree/tasks/.gitkeep \
   skills/unity-orchestration/templates/docs-tree/CHANGELOG.md \
-  skills/unity-orchestration/scripts/init-workspace.sh \
-  skills/unity-orchestration/scripts/tally-votes.sh \
-  skills/unity-orchestration/scripts/update-docs-index.py \
+  scripts/init-workspace.sh \
+  scripts/update-docs-index.py \
+  scripts/migrate-v02-to-v1.sh \
   tests/scripts/init-workspace.test.sh \
-  tests/scripts/tally-votes.test.sh \
-  tests/scripts/update-docs-index.test.sh; do
+  tests/scripts/update-docs-index.test.sh \
+  docs/archive/v0.2/README.md; do
   check_file "$f"
 done
 
@@ -155,17 +151,71 @@ done
 
 # --- Script executable bits --------------------------------------------
 for s in \
-  skills/unity-orchestration/scripts/init-workspace.sh \
-  skills/unity-orchestration/scripts/tally-votes.sh \
-  skills/unity-orchestration/scripts/update-docs-index.py \
+  scripts/init-workspace.sh \
+  scripts/update-docs-index.py \
+  scripts/migrate-v02-to-v1.sh \
   tests/structure-check.sh \
   tests/scripts/init-workspace.test.sh \
-  tests/scripts/tally-votes.test.sh \
-  tests/scripts/update-docs-index.test.sh; do
+  tests/scripts/update-docs-index.test.sh \
+  tests/integration/test-notion-sync.sh \
+  tests/integration/test-preservation.sh \
+  tests/integration/test-unity-orchestration-flow.sh \
+  tests/integration/test-migration.sh; do
   if [[ -f "$ROOT/$s" && ! -x "$ROOT/$s" ]]; then
     err "$s: not executable (run: chmod +x $s)"
   fi
 done
+
+# --- v1.0 dual-tree init test ---
+test_dual_tree_init() {
+    local tmp
+    tmp="$(mktemp -d)"
+    # Convert to Windows-style path for python3 if on git-bash
+    if command -v cygpath >/dev/null 2>&1; then
+        tmp="$(cygpath -m "$tmp")"
+    fi
+    bash "$ROOT/scripts/init-workspace.sh" "$tmp" "test-slug" >/dev/null 2>&1 || true
+    if [[ ! -d "$tmp/notion_docs/_meta" ]]; then
+        err "dual-tree init: notion_docs/_meta missing"
+        return 1
+    fi
+    if [[ ! -d "$tmp/develop_docs/_meta" ]]; then
+        err "dual-tree init: develop_docs/_meta missing"
+        return 1
+    fi
+    if [[ ! -f "$tmp/notion_docs/_meta/sync-state.json" ]]; then
+        err "dual-tree init: sync-state.json not seeded"
+        return 1
+    fi
+    if [[ ! -f "$tmp/notion_docs/_meta/page-map.json" ]]; then
+        err "dual-tree init: page-map.json not seeded"
+        return 1
+    fi
+    rm -rf "$tmp"
+    ok "dual-tree init (notion_docs + develop_docs + _meta files)"
+}
+test_dual_tree_init
+
+# --- v1.0 notion-sync skill scaffold ---
+check_file "skills/notion-sync/SKILL.md"
+check_file "skills/notion-sync/change-detection.md"
+check_file "skills/notion-sync/templates/notion-doc-frontmatter.md"
+
+# --- v1.0 docs-refinement skill scaffold ---
+check_file "skills/docs-refinement/SKILL.md"
+check_file "skills/docs-refinement/cross-ref-rules.md"
+check_file "skills/docs-refinement/templates/develop-doc-frontmatter.md"
+
+# --- v1.0 integration tests ---
+check_file "tests/integration/test-notion-sync.sh"
+check_file "tests/integration/test-docs-refinement.sh"
+check_file "tests/integration/test-preservation.sh"
+check_file "tests/integration/test-unity-orchestration-flow.sh"
+check_file "tests/integration/test-migration.sh"
+
+# --- v0.2 → v1.0 migration fixtures ---
+check_file "tests/fixture/v0.2-layout/docs/game/systems/combat.md"
+check_file "tests/fixture/v0.2-layout/.orchestration/sessions/2026-04-11-sample/README.md"
 
 # --- Report -------------------------------------------------------------
 if [[ $ERRORS -gt 0 ]]; then
