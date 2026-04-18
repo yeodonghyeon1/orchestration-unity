@@ -4,6 +4,19 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [2.2.2] — 2026-04-19
+
+### Fixed
+- `hooks/hooks.json` wrapped in top-level `"hooks": { … }` object, as
+  required by Claude Code's plugin hooks schema. Previous versions
+  (2.0.0–2.2.1) failed to register the post-edit hook with the error:
+  ```
+  Failed to load hooks from hooks.json:
+    { expected: "record", path: ["hooks"], message: "expected record, received undefined" }
+  ```
+- No behavioral change for user files. The `on-file-edit.sh` router is
+  unchanged.
+
 ## [2.2.1] — 2026-04-19
 
 ### Changed / Added
