@@ -21,6 +21,18 @@ per-part cursor stored in `raw/_meta/sync-state.json`.
 3. Notion MCP tools available.
 4. No uncommitted changes in `raw/` or `llm_wiki/`. If dirty, ask
    whether to stash.
+5. **LFS setup check** (warn-only, doesn't abort):
+   - `.gitattributes` exists at repo root and contains at least one LFS
+     filter for image extensions (`filter=lfs`). If not, print a
+     one-liner warning suggesting:
+     ```
+     echo 'llm_wiki/images/** filter=lfs diff=lfs merge=lfs -text' >> .gitattributes
+     echo '*.png filter=lfs diff=lfs merge=lfs -text' >> .gitattributes
+     git lfs install
+     ```
+   - `.git/hooks/pre-commit` exists and enforces the 100 MB cap. If
+     absent, offer to install the hook (see "Pre-commit hook" section
+     at the end of this file).
 
 ## Algorithm
 
@@ -107,11 +119,25 @@ Skip entirely if `--no-images` is passed.
       Example: `03-a1b2c3d4.png`.
    c. Download:
       ```
-      curl -sSL --max-time 30 --retry 1 -o \
+      curl -sSL --max-time 30 --retry 1 --max-filesize 104857600 -o \
         "llm_wiki/images/<part>/<slug>/<filename>" "<url>"
       ```
-   d. **On failure** (HTTP 4xx/5xx, timeout):
-      - Log warning with URL snippet.
+      `--max-filesize 104857600` enforces a **100 MB hard cap** during
+      download. curl aborts mid-stream and returns exit 63 if the
+      response body exceeds it; this prevents a commit that later gets
+      rejected by GitHub's 100 MB push limit.
+   d. **Post-download size check** (defense in depth for missing
+      Content-Length):
+      ```
+      size=$(wc -c < "llm_wiki/images/<part>/<slug>/<filename>")
+      if [ "$size" -gt 104857600 ]; then
+        rm "llm_wiki/images/<part>/<slug>/<filename>"
+        append to download_failures: {url, reason: "too_large (>100MB)"}
+        keep original URL in body
+      fi
+      ```
+   e. **On failure** (HTTP 4xx/5xx, timeout, too_large, curl-63):
+      - Log warning with URL snippet + reason.
       - Keep original URL in body (will be broken but traceable).
       - Append `{url, reason}` to `download_failures[]` for final report.
 
@@ -127,7 +153,9 @@ Skip entirely if `--no-images` is passed.
    - URL already starts with `../llm_wiki/images/` or `llm_wiki/images/`
      (already localized) — no-op.
    - `data:image/...;base64,...` inline — no-op (not a remote URL).
-   - File size > 50MB after download — warn but keep the file.
+   - File size > 100MB after download — **deleted and skipped**
+     (GitHub rejects files this large on regular git push; LFS alone
+     is not sufficient, and even LFS has per-file costs).
 
 6. **After download**, record in sync-state row entry:
    ```json
@@ -251,6 +279,45 @@ wiki-ingest complete:
   wiki files refined: L
   unclaimed → new pages: <list>
   per-row diff summaries: <list>
+  images downloaded: X  (skipped too-large: Y)
+  download failures: <list>  (kept original URLs)
   last_main_seen advanced: <list of timestamps>
   next: /wiki-query to inspect, or /notion-push if the wiki was manually edited.
+```
+
+## Pre-commit hook (project-local, 100 MB guard)
+
+When the pre-flight detects the hook is missing, propose this install
+command (run once per clone):
+
+```bash
+cat > .git/hooks/pre-commit <<'HOOK'
+#!/usr/bin/env bash
+# Block commit if any staged file exceeds 100 MB — GitHub rejects these
+# on regular git push. Large binaries should be LFS-tracked; once LFS
+# is active, only tiny pointer files are staged, so this check passes.
+set -e
+limit=$((100 * 1024 * 1024))
+over=0
+while IFS= read -r f; do
+  [ -f "$f" ] || continue
+  size=$(wc -c < "$f" 2>/dev/null)
+  if [ "${size:-0}" -gt $limit ]; then
+    printf 'error: %s is %s bytes (>100MB). Commit blocked.\n' "$f" "$size"
+    over=1
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACM)
+if [ "$over" -ne 0 ]; then
+  cat <<'MSG'
+
+Options:
+  1. Track with git LFS (add pattern to .gitattributes, git lfs track, re-stage).
+  2. Remove from staging: git rm --cached <file>
+  3. Compress or split the file.
+MSG
+  exit 1
+fi
+HOOK
+chmod +x .git/hooks/pre-commit
+echo "installed .git/hooks/pre-commit (100MB guard)"
 ```

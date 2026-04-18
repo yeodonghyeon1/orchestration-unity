@@ -4,6 +4,29 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [2.2.1] — 2026-04-19
+
+### Changed / Added
+- `wiki-ingest` Phase 3.5 download now enforces a **100 MB hard cap**:
+  - `curl --max-filesize 104857600` aborts mid-stream if Content-Length
+    or actual body exceeds 100 MB (exit 63).
+  - Post-download `wc -c` check deletes anything that slipped through
+    (e.g. missing Content-Length header).
+  - Files >100 MB are reported as `too_large` and their original URL
+    is kept in the body for traceability.
+- `wiki-ingest` Phase 0 pre-flight now warns when `.gitattributes` is
+  missing LFS filters, or when `.git/hooks/pre-commit` does not exist.
+  The skill prints the installation one-liner.
+- SKILL.md appendix: ready-to-paste `.git/hooks/pre-commit` script —
+  blocks commits when any staged file is >100 MB. This prevents
+  accidents from slipping past LFS setup mistakes.
+
+### Rationale
+- GitHub rejects regular git push for files larger than 100 MB. LFS
+  pointer files are tiny, so LFS-tracked binaries pass the hook; but
+  the hook catches the common failure mode where the artist forgot to
+  add `.gitattributes` before staging.
+
 ## [2.2.0] — 2026-04-19
 
 ### Added
