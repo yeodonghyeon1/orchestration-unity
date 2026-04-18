@@ -127,6 +127,7 @@ for f in \
   skills/unity-orchestration/templates/docs-tree/CHANGELOG.md \
   scripts/init-workspace.sh \
   scripts/update-docs-index.py \
+  scripts/migrate-v02-to-v1.sh \
   tests/scripts/init-workspace.test.sh \
   tests/scripts/update-docs-index.test.sh; do
   check_file "$f"
@@ -149,12 +150,14 @@ done
 for s in \
   scripts/init-workspace.sh \
   scripts/update-docs-index.py \
+  scripts/migrate-v02-to-v1.sh \
   tests/structure-check.sh \
   tests/scripts/init-workspace.test.sh \
   tests/scripts/update-docs-index.test.sh \
   tests/integration/test-notion-sync.sh \
   tests/integration/test-preservation.sh \
-  tests/integration/test-unity-orchestration-flow.sh; do
+  tests/integration/test-unity-orchestration-flow.sh \
+  tests/integration/test-migration.sh; do
   if [[ -f "$ROOT/$s" && ! -x "$ROOT/$s" ]]; then
     err "$s: not executable (run: chmod +x $s)"
   fi
@@ -205,6 +208,11 @@ check_file "tests/integration/test-notion-sync.sh"
 check_file "tests/integration/test-docs-refinement.sh"
 check_file "tests/integration/test-preservation.sh"
 check_file "tests/integration/test-unity-orchestration-flow.sh"
+check_file "tests/integration/test-migration.sh"
+
+# --- v0.2 → v1.0 migration fixtures ---
+check_file "tests/fixture/v0.2-layout/docs/game/systems/combat.md"
+check_file "tests/fixture/v0.2-layout/.orchestration/sessions/2026-04-11-sample/README.md"
 
 # --- Report -------------------------------------------------------------
 if [[ $ERRORS -gt 0 ]]; then
