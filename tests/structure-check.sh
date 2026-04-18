@@ -165,7 +165,8 @@ for s in \
   tests/scripts/init-workspace.test.sh \
   tests/scripts/tally-votes.test.sh \
   tests/scripts/update-docs-index.test.sh \
-  tests/integration/test-notion-sync.sh; do
+  tests/integration/test-notion-sync.sh \
+  tests/integration/test-preservation.sh; do
   if [[ -f "$ROOT/$s" && ! -x "$ROOT/$s" ]]; then
     err "$s: not executable (run: chmod +x $s)"
   fi
@@ -214,6 +215,7 @@ check_file "skills/docs-refinement/templates/develop-doc-frontmatter.md"
 # --- v1.0 integration tests ---
 check_file "tests/integration/test-notion-sync.sh"
 check_file "tests/integration/test-docs-refinement.sh"
+check_file "tests/integration/test-preservation.sh"
 
 # --- Report -------------------------------------------------------------
 if [[ $ERRORS -gt 0 ]]; then
