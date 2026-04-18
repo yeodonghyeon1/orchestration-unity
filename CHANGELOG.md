@@ -4,52 +4,40 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
-## [Unreleased] — v1.0 roadmap
+## [1.0.0] — 2026-04-18
 
-Progressing toward v1.0.0 — a Notion-driven Superpowers pipeline. See
-`docs/superpowers/specs/2026-04-18-orchestration-unity-v1-design.md`.
+### BREAKING
+- Complete redesign: 10-agent consensus team replaced with Notion-driven Superpowers pipeline.
+- `/unity-orchestration` arguments, skill names, and workflow semantics have all changed. Existing v0.2.0 users should run `bash scripts/migrate-v02-to-v1.sh`.
+- Removed: `skills/unity-orchestration/agents/*.md`, `voting.md`, `consultation-table.md`, `scripts/tally-votes.sh`, `agents/unity-orchestrator.md`.
 
-### Slice A (MVP Notion Sync) — complete in 1.0.0-alpha.1
-- Added `scripts/notion-hash.py` — deterministic SHA256 of Notion content (excludes volatile fields)
-- Added `scripts/page-map.py` — Notion page → folder mapping manager with atomic writes
-- Added `scripts/sync-state.py` — `_meta/sync-state.json` management (pages + orphans)
-- Moved `scripts/init-workspace.sh` to top-level `scripts/` and extended for dual-tree seeding (`notion_docs/` + `develop_docs/`)
-- Added `skills/notion-sync/` — skill with 4-step change detection pipeline (SKILL.md, change-detection.md, templates/)
-- Added `commands/notion-sync.md` — `/notion-sync` slash command
-- Added fixtures at `tests/fixture/mock-notion-responses/` (page-list, 3 page responses)
-- Added unit tests for hashing, page-map, sync-state (with coverage for TSV output, duplicate rejection, missing keys)
-- Added integration test `tests/integration/test-notion-sync.sh` covering full pipeline with fixtures
-- Set git executable bits (`100755`) on all scripts and tests
+### Added
+- Two-tier docs: `notion_docs/` (raw Notion mirror) + `develop_docs/` (refined, cross-referenced).
+- `/notion-sync`, `/docs-refinement`, `/docs-update` slash commands.
+- `scripts/notion-hash.py` — deterministic SHA256 of Notion content.
+- `scripts/page-map.py` — Notion page → folder mapping.
+- `scripts/sync-state.py` — `_meta/sync-state.json` management.
+- `scripts/docs-index.py` — `_meta/index.json` with tree + reverse_index (fixes v0.2 `_self` bug).
+- `scripts/bfs-impact.py` — reverse-index BFS traversal.
+- `scripts/provenance.py` — HTML-comment section-level source markers.
+- `scripts/code-to-docs.py` — C# public surface → markdown.
+- `scripts/code-doc-updater.sh` — post-implementation develop_docs updater.
+- `scripts/migrate-v02-to-v1.sh` — migrate existing v0.2.0 projects.
+- `skills/notion-sync/` — 4-step change detection.
+- `skills/docs-refinement/` — BFS-based incremental refinement.
+- Rewritten `skills/unity-orchestration/` — 11-step Superpowers chain orchestrator.
+- Section-level provenance (`notion:*` / `code:*` / `manual`) for Living Knowledge Base.
+- Integration tests: notion-sync, docs-refinement, preservation, unity-orchestration flow, migration.
+- Docs: `architecture.md` (v1 promoted), `notion-schema-guide.md`, full spec at `docs/superpowers/specs/2026-04-18-orchestration-unity-v1-design.md`.
 
-### Slice B (Refinement + /docs-update) — complete in 1.0.0-alpha.2
-- Added `scripts/docs-index.py` — builds `_meta/index.json` with tree + reverse_index (schema v2 with `_self` bug fix from v0.2.0)
-- Added `scripts/bfs-impact.py` — BFS traversal over reverse_index for change-impact lookup
-- Moved `scripts/update-docs-index.py` to top-level scripts/ and replaced with forwarding shim to `docs-index.py`
-- Added `skills/docs-refinement/` — skill with 3-phase algorithm (Index → Impact → Refine), cross-ref rules, frontmatter template
-- Added `commands/docs-refinement.md` — `/docs-refinement` slash command
-- Added `commands/docs-update.md` — `/docs-update` meta command (chains sync → refine → branch commit → push)
-- Added fixture `tests/fixture/develop-docs-sample/` and integration test `tests/integration/test-docs-refinement.sh`
+### Changed
+- `scripts/update-docs-index.py` → forwarding shim to `docs-index.py`.
+- `scripts/init-workspace.sh` now seeds `notion_docs/` and `develop_docs/` dual trees.
+- v0.2.0 docs archived under `docs/archive/v0.2/`.
 
-### Slice C (Living Knowledge Base) — complete in 1.0.0-alpha.3
-- Added `scripts/provenance.py` — HTML comment provenance marker parser/writer (sources/extract/replace/append/strip)
-- Added `scripts/code-to-docs.py` — C# public surface extractor (classes, methods, properties, serialized fields); both markdown and YAML frontmatter modes
-- Added fixtures: `tests/fixture/csharp-samples/{CombatSystem,DamageFormula}.cs` and `tests/fixture/provenance-sample.md`
-- Updated `skills/docs-refinement/SKILL.md` with Section Preservation chapter — defines the notion/code/manual source tags and the preserve-non-notion-sections contract
-- Updated `skills/docs-refinement/cross-ref-rules.md` with provenance markers appendix
-- Updated `skills/docs-refinement/templates/develop-doc-frontmatter.md` with `section_sources` and `code_references` fields
-- Added preservation integration test demonstrating that `/docs-refinement` regenerates only `notion:*` sections while preserving `code:*` and `manual` sections
-
-### Slice D (Unity Orchestration v1.0) — complete in 1.0.0-alpha.4
-- **BREAKING**: Removed v0.2.0 consensus team artifacts: `skills/unity-orchestration/agents/*.md` (6 role prompts), `voting.md`, `consultation-table.md`, `tally-votes.sh`, `agents/unity-orchestrator.md` bootstrap
-- Rewrote `skills/unity-orchestration/SKILL.md` as the Superpowers chain orchestrator entry
-- Rewrote `skills/unity-orchestration/workflow.md` as the 11-step reference (brainstorming → context → plan → approval → worktree → execution → TDD → unity-mcp → verification → code-doc-updater → finish)
-- Rewrote `commands/unity-orchestration.md` — takes `<task>` argument, invokes Superpowers chain
-- Added `scripts/code-doc-updater.sh` — Step 10 automation that orchestrates code-to-docs.py + provenance.py to refresh `develop_docs/tech/unity/**` code sections after C# changes
-- Added `tests/integration/test-unity-orchestration-flow.sh` — simulates Step 6 → 10 → index rebuild
-- Added `tests/fixture/mini-unity-project/` — minimal Unity project structure for integration tests
-
-### Planned (upcoming slices)
-- Slice E: v0.2 → v1.0 migration, README replacement, 1.0.0 release tag
+### Preserved
+- `.orchestration/sessions/` content from v0.2.0 sessions (unused in v1.0 but not deleted).
+- `docs/superpowers/specs/2026-04-11-unity-orchestration-design.md` (v0.2.0 design spec).
 
 ## [0.2.0] — 2026-04-13
 
