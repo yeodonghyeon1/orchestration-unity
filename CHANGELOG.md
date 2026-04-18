@@ -4,6 +4,69 @@ All notable changes to this plugin are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [SemVer](https://semver.org/).
 
+## [2.0.0] — 2026-04-19
+
+### BREAKING
+- **llm-wiki pattern redesign.** Directory names, skill names, and Notion
+  structure all changed. No automatic migration script — projects on v1.0
+  must re-bootstrap.
+- **Plugin is now scriptless.** `scripts/` directory entirely removed.
+  All logic previously in Python/bash helpers lives inside `SKILL.md`
+  instructions (Bash + Notion MCP + Read/Write). Motivation: keep the
+  plugin project-agnostic — no hardcoded paths or project-specific
+  schemas.
+- **Removed commands**: `/notion-sync`, `/docs-refinement`, `/docs-update`.
+  Their function is merged into `/wiki-ingest`.
+- **Notion structure**: part pages now contain **two** databases
+  (📘 메인, 💡 자료&아이디어) instead of three. The 🗂 로그 DB is gone.
+- **Change detection**: no longer driven by a log database. Each part's
+  📘 메인 is paginated by `last_edited_time DESC` and stops when reaching
+  `sync-state.last_main_seen[part]`.
+- Local trees renamed: `notion_docs/` → `raw/`, `develop_docs/` → `llm_wiki/`.
+- `raw/_meta/db-map.json` schema v2 (log fields removed).
+- `raw/_meta/sync-state.json` schema v3 (`last_log_seen` →
+  `last_main_seen` + `last_notes_seen`).
+
+### Added
+- `skills/init-wiki/` — seed local `raw/` + `llm_wiki/` skeleton.
+- `skills/wiki-ingest/` — log-free Notion → local sync with `상태` filter.
+- `skills/wiki-sync-code/` — regenerate `llm_wiki/tech/**` from modified
+  `Assets/**/*.cs` sections (`<!-- source: code:<path> -->`).
+- `skills/wiki-query/` — wiki-grounded Q&A with citations; optional
+  filing into `llm_wiki/explorations/`.
+- `skills/wiki-lint/` — orphan/stale-draft/contradiction/broken-link audit.
+- `skills/notion-bootstrap/` — creates 3 parts × 2 DBs; log-free schema.
+- `skills/notion-push/` — reverse sync (wiki → Notion 메인 row); preserves
+  `<!-- source: manual -->` blocks.
+- `hooks/hooks.json` + `hooks/on-file-edit.sh` — post-edit suggestions
+  (non-invasive; emits `systemMessage` hints, no auto-invocation).
+- Commands: `/init-wiki`, `/wiki-ingest`, `/wiki-sync-code`, `/wiki-query`,
+  `/wiki-lint`, `/notion-bootstrap`, `/notion-push`.
+
+### Changed
+- `skills/unity-orchestration/` — Step 2 context now reads
+  `llm_wiki/index.md` + `llm_wiki/log.md` (last 20 lines); Step 10 calls
+  `/wiki-sync-code` after verification.
+- Plugin description updated to reflect the scriptless llm-wiki pattern.
+
+### Removed
+- `scripts/` directory (14 files — `sync-state.py`, `page-map.py`,
+  `notion-hash.py`, `bfs-impact.py`, `docs-index.py`, `provenance.py`,
+  `code-to-docs.py`, `code-doc-updater.sh`, `init-workspace.sh`,
+  `migrate-v02-to-v1.sh`, `update-docs-index.py`, and variants).
+- `skills/notion-sync/`, `skills/docs-refinement/`.
+- `commands/notion-sync.md`, `commands/docs-refinement.md`,
+  `commands/docs-update.md`.
+
+### Rationale
+- v1.0's log DB required users to make an explicit log entry every time a
+  메인 row changed. In practice, users edit `상태: fixed` and forget the
+  log — sync silently ignored the change. v2 closes that gap by using
+  `last_edited_time` directly.
+- Python scripts forced every project to keep the plugin's helpers in
+  sync. Moving logic into SKILL.md keeps the plugin source-free and
+  project-agnostic.
+
 ## [1.0.0] — 2026-04-18
 
 ### BREAKING
