@@ -39,8 +39,16 @@ Progressing toward v1.0.0 — a Notion-driven Superpowers pipeline. See
 - Updated `skills/docs-refinement/templates/develop-doc-frontmatter.md` with `section_sources` and `code_references` fields
 - Added preservation integration test demonstrating that `/docs-refinement` regenerates only `notion:*` sections while preserving `code:*` and `manual` sections
 
+### Slice D (Unity Orchestration v1.0) — complete in 1.0.0-alpha.4
+- **BREAKING**: Removed v0.2.0 consensus team artifacts: `skills/unity-orchestration/agents/*.md` (6 role prompts), `voting.md`, `consultation-table.md`, `tally-votes.sh`, `agents/unity-orchestrator.md` bootstrap
+- Rewrote `skills/unity-orchestration/SKILL.md` as the Superpowers chain orchestrator entry
+- Rewrote `skills/unity-orchestration/workflow.md` as the 11-step reference (brainstorming → context → plan → approval → worktree → execution → TDD → unity-mcp → verification → code-doc-updater → finish)
+- Rewrote `commands/unity-orchestration.md` — takes `<task>` argument, invokes Superpowers chain
+- Added `scripts/code-doc-updater.sh` — Step 10 automation that orchestrates code-to-docs.py + provenance.py to refresh `develop_docs/tech/unity/**` code sections after C# changes
+- Added `tests/integration/test-unity-orchestration-flow.sh` — simulates Step 6 → 10 → index rebuild
+- Added `tests/fixture/mini-unity-project/` — minimal Unity project structure for integration tests
+
 ### Planned (upcoming slices)
-- Slice D: `/unity-orchestration` Superpowers chain rewrite (removes 10-agent consensus)
 - Slice E: v0.2 → v1.0 migration, README replacement, 1.0.0 release tag
 
 ## [0.2.0] — 2026-04-13
