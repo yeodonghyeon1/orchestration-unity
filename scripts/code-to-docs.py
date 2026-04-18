@@ -21,7 +21,7 @@ CLASS_RE = re.compile(
 )
 METHOD_RE = re.compile(
     r"^\s*public\s+(static\s+|virtual\s+|override\s+|async\s+)*"
-    r"[\w<>,\[\]\s]+?\s+(\w+)\s*\([^;{]*\)\s*[{=]"
+    r"[\w<>,\[\]\s]+?\s+(\w+)\s*\([^;{]*\)(?:\s*[{=]|$)"
 )
 PROPERTY_RE = re.compile(
     r"^\s*public\s+[\w<>,\[\]\s]+\s+(\w+)\s*\{[^}]*get"
@@ -30,7 +30,7 @@ EXPR_BODY_PROP_RE = re.compile(
     r"^\s*public\s+[\w<>,\[\]\s]+\s+(\w+)\s*=>"
 )
 SERIALIZED_FIELD_RE = re.compile(
-    r"\[SerializeField\][^;]*?(\w+)\s*;"
+    r"\[SerializeField\]\s+(?:private\s+)?[\w<>,\[\]\s]+?\s+(\w+)\s*(?:=|;)"
 )
 
 
