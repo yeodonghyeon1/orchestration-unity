@@ -50,6 +50,44 @@ The sub-agent transforming notion content into develop_docs must follow:
 
 See `cross-ref-rules.md` for detailed cross-reference semantics.
 
+## Section preservation (Living Knowledge Base)
+
+As of v1.0 Slice C, `develop_docs/` files may contain sections from
+non-Notion sources (code, manual). These are marked with HTML provenance
+comments:
+
+- `<!-- source: notion:<id> -->` — refined from notion_docs
+- `<!-- source: code:<path> -->` — derived from C# code (updated by /unity-orchestration)
+- `<!-- source: manual -->` — user-authored, preserved across all updates
+
+**Critical rule:** When refining, ONLY regenerate sections with
+`source: notion:*`. Preserve `code:*` and `manual` sections verbatim.
+
+### Algorithm update
+
+For each affected develop_docs file:
+
+1. `sources="$(python3 scripts/provenance.py sources path/to/file.md)"`
+2. For each `source` matching `notion:*`:
+   - Load the referenced notion_doc
+   - Dispatch sub-agent to produce new section content
+   - `python3 scripts/provenance.py replace path/to/file.md "$source" new-content.md`
+3. Do NOT touch `code:*` or `manual` sections.
+
+### Orphaned sections
+
+If a `notion:*` source is no longer in `source_notion_docs[]`:
+- Replace body with: `> DEPRECATED: source page removed from Notion (was: <id>)`
+- Keep the marker so future runs don't re-create it.
+
+### User-edited notion sections (conflict case)
+
+If the file has been manually edited inside a `notion:*` section (detected
+via `refinement_hash` mismatch for notion-only content):
+- Pause and ask user: `[o]verwrite, [p]reserve (treat as manual), [a]bort`
+- On "preserve", change marker to `source: manual`
+- On "abort", skip this file and log
+
 ## Forbidden actions
 
 - Do NOT call Notion MCP directly — only read from `notion_docs/`

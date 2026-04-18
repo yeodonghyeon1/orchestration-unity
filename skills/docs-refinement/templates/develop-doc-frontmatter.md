@@ -9,15 +9,16 @@ source_notion_docs:
 refs:
 {{refs_list}}
 
-owner: claude
-last_refined: "{{last_refined}}"
-refinement_hash: "{{refinement_hash}}"
-
+# Section-level provenance (Slice C)
 section_sources:
-{{section_sources}}
+{{section_sources_yaml}}    # e.g., "  \"Combat Mechanics\": notion:plan.combat-system"
 
 code_references:
-{{code_references}}
+{{code_references_yaml}}    # output of: code-to-docs.py --frontmatter *.cs
+
+owner: claude
+last_refined: "{{last_refined}}"
+refinement_hash: "{{refinement_hash}}"   # SHA256 over notion:* sections only
 ---
 
 {{markdown_body}}

@@ -41,3 +41,10 @@ source_notion_docs:
 `refinement_hash` is computed only over `source: notion:*` sections to keep
 refinement idempotent under dual-origin content. Code-derived and
 manual sections are excluded.
+
+## Provenance markers (v1.0 Slice C)
+
+See `scripts/provenance.py` for manipulation. Section sources are stored
+both inline (HTML comments) and in the frontmatter `section_sources:` map.
+Keep them consistent — `docs-refinement` reads comments first and updates
+frontmatter on write.
