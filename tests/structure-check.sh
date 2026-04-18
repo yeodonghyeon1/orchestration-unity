@@ -98,15 +98,7 @@ fi
 # --- Docs-tree-schema files (full 6-field frontmatter) -----------------
 for f in \
   skills/unity-orchestration/workflow.md \
-  skills/unity-orchestration/voting.md \
-  skills/unity-orchestration/consultation-table.md \
   skills/unity-orchestration/docs-tree-spec.md \
-  skills/unity-orchestration/agents/team-lead.md \
-  skills/unity-orchestration/agents/planner.md \
-  skills/unity-orchestration/agents/designer.md \
-  skills/unity-orchestration/agents/developer.md \
-  skills/unity-orchestration/agents/recorder.md \
-  skills/unity-orchestration/agents/tester.md \
   skills/unity-orchestration/templates/docs-tree/README.md \
   skills/unity-orchestration/templates/docs-tree/_meta/glossary.md \
   skills/unity-orchestration/templates/docs-tree/_meta/conventions.md \
@@ -125,7 +117,6 @@ for f in \
   commands/notion-sync.md \
   commands/docs-refinement.md \
   commands/docs-update.md \
-  agents/unity-orchestrator.md \
   skills/unity-orchestration/templates/task-table.template.md \
   skills/unity-orchestration/templates/vote-message.template.json \
   skills/unity-orchestration/templates/adr.template.md \
@@ -136,9 +127,7 @@ for f in \
   skills/unity-orchestration/templates/docs-tree/CHANGELOG.md \
   scripts/init-workspace.sh \
   scripts/update-docs-index.py \
-  skills/unity-orchestration/scripts/tally-votes.sh \
   tests/scripts/init-workspace.test.sh \
-  tests/scripts/tally-votes.test.sh \
   tests/scripts/update-docs-index.test.sh; do
   check_file "$f"
 done
@@ -160,10 +149,8 @@ done
 for s in \
   scripts/init-workspace.sh \
   scripts/update-docs-index.py \
-  skills/unity-orchestration/scripts/tally-votes.sh \
   tests/structure-check.sh \
   tests/scripts/init-workspace.test.sh \
-  tests/scripts/tally-votes.test.sh \
   tests/scripts/update-docs-index.test.sh \
   tests/integration/test-notion-sync.sh \
   tests/integration/test-preservation.sh; do
